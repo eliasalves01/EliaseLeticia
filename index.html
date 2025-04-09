@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>Netflix do Amor</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400..700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div id="start-screen" class="start-screen">
+    <button class="start-btn" onclick="iniciar()">✨ Você está pronta, meu amor? 💌</button>
+  </div>
+
+  <div id="intro" class="intro" style="display:none;">
+    <div id="text" class="text-container bg-gradient-to-r from-purple-400 to-pink-300 bg-clip-text text-transparent text-4xl md:text-6xl font-bold tracking-tight text-center"></div>
+  </div>
+
+  <div id="music-section" class="music-section">
+    <h1 class="highlight">Nossa Trilha Sonora</h1>
+    <div class="subtitle">
+        <p>Cada nota é uma lembrança, cada melodia um momento nosso</p>
+        <p class="heart-divider">❤️ ❤️ ❤️</p>
+    </div>       
+    <div class="music-carousel">
+      <div class="music-cards" id="music-cards">
+        <!-- CARD 1 -->
+        <div class="music-card">
+          <div class="music-player">
+            <img src="assets/CapadeMusica2.jpeg" alt="Capa do Álbum" class="album-cover">
+            <div class="song-info">
+              <p class="song-title">I Wanna Be Yours</p>
+              <p class="artist">Arctic Monkeys</p>
+            </div>
+            <button class="play-button" data-audio="audio1">▶</button>
+          </div>
+          <div class="progress-container">
+            <div class="progress-bar" id="progress1"></div>
+          </div>
+          <div class="time-info">
+            <span class="current-time">0:00</span>
+            <span class="duration">3:04</span>
+          </div>
+          <audio id="audio1" src="assets/musica2.mp3"></audio>
+        </div>
+        
+        <!-- CARD 2 -->
+        <div class="music-card">
+          <div class="music-player">
+            <img src="assets/CapadeMusica1.jpg" alt="Capa do Álbum" class="album-cover">
+            <div class="song-info">
+              <p class="song-title">Monde Nouveau</p>
+              <p class="artist">Oscar Anton</p>
+            </div>
+            <button class="play-button" data-audio="audio2">▶</button>
+          </div>
+          <div class="progress-container">
+            <div class="progress-bar" id="progress2"></div>
+          </div>
+          <div class="time-info">
+            <span class="current-time">0:00</span>
+            <span class="duration">2:38</span>
+          </div>
+          <audio id="audio2" src="assets/musica.mp3"></audio>
+        </div>
+        
+        <!-- CARD 3 -->
+        <div class="music-card">
+          <div class="music-player">
+            <img src="assets/CapadeMusica3.jpeg" alt="Capa do Álbum" class="album-cover">
+            <div class="song-info">
+              <p class="song-title">Compass</p>
+              <p class="artist">the neighbourhood</p>
+            </div>
+            <button class="play-button" data-audio="audio3">▶</button>
+          </div>
+          <div class="progress-container">
+            <div class="progress-bar" id="progress3"></div>
+          </div>
+          <div class="time-info">
+            <span class="current-time">0:00</span>
+            <span class="duration">2:51</span>
+          </div>
+          <audio id="audio3" src="assets/musica3.mp3"></audio>
+        </div>
+      </div>
+      
+      <div class="carousel-indicators">
+        <div class="indicator active" data-index="0"></div>
+        <div class="indicator" data-index="1"></div>
+        <div class="indicator" data-index="2"></div>
+      </div>
+    </div>
+    
+    <div class="swipe-instruction">
+      <span>Arraste para o lado</span>
+      <span class="swipe-icon">→</span>
+    </div>
+    
+    <div class="unlock-message" id="unlock-message">
+      Você viu todas as músicas! Agora pode descer para continuar.
+    </div>
+  </div>
+
+  <audio id="bg-music" loop>
+    <source src="assets/musica.mp3" type="audio/mpeg" />
+    Seu navegador não suporta áudio.
+  </audio>
+
+  <header>
+    <div class="logo">NETFLIX</div>
+    <nav>
+      <ul>
+        <li><a href="#">Início</a></li>
+        <li><a href="#">Séries</a></li>
+        <li><a href="#">Filmes</a></li>
+        <li><a href="#">Minha Lista</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <div id="video-modal" class="hidden fixed inset-0 z-50 bg-black bg-opacity-90 flex items-center justify-center">
+    <div class="relative w-full max-w-4xl">
+      <button id="close-modal" class="absolute -top-10 right-0 text-white text-2xl">✕</button>
+      <video id="modal-video" controls class="w-full">
+        <source src="assets/video.mp4" type="video/mp4">
+        Seu navegador não suporta vídeos em HTML5.
+      </video>
+    </div>
+  </div>
+
+  <main>
+    <section class="banner">
+      <video id="main-video" autoplay muted loop playsinline>
+        <source src="assets/video.mp4" type="video/mp4">
+        Seu navegador não suporta vídeos em HTML5.
+      </video>
+      <div class="overlay"></div>
+      <div class="banner-content">
+        <h1>Elias & Leticia</h1>
+        <p>Juntos desde 2025 💕</p>
+        <p class="tagline">"O amor verdadeiro não tem final feliz, porque simplesmente não tem final."</p>
+        <div class="buttons">
+          <button class="btn-play">▶ Assistir</button>
+          <button class="btn-list">+ Minha Lista</button>
+          <button id="voice-btn" class="btn-voice" title="Diga 'Eu te amo'">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
+              <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+              <line x1="12" y1="19" x2="12" y2="23"></line>
+              <line x1="8" y1="23" x2="16" y2="23"></line>
+            </svg>
+            <span>Comando de Voz</span>
+          </button>
+        </div>
+        <div id="voice-status" class="voice-status"></div>
+      </div>
+    </section>
+
+    <section class="moments">
+      <h2>Momentos Inesquecíveis</h2>
+      <div class="gallery">
+        <img src="https://img.cancaonova.com/cnimages/canais/uploads/sites/6/2010/08/formacao_harmonia-sexual-entre-o-casal-1600x1200.jpg" alt="Momento 1">
+        <img src="https://img.cancaonova.com/cnimages/canais/uploads/sites/6/2010/08/formacao_harmonia-sexual-entre-o-casal-1600x1200.jpg" alt="Momento 2">
+        <img src="https://img.cancaonova.com/cnimages/canais/uploads/sites/6/2010/08/formacao_harmonia-sexual-entre-o-casal-1600x1200.jpg" alt="Momento 3">
+        <img src="https://img.cancaonova.com/cnimages/canais/uploads/sites/6/2010/08/formacao_harmonia-sexual-entre-o-casal-1600x1200.jpg" alt="Momento 4">
+      </div>
+    </section>
+  </main>
+
+  <script src="/js/script.js"></script>
+</body>
+</html>
