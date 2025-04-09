@@ -328,7 +328,7 @@ function updateCarousel() {
 }
 
 function showUnlockMessage() {
-  unlockMessage.innerHTML = '<p>Deslize para cima ou use a roda do mouse para continuar nossa jornada de amor...</p>';
+  unlockMessage.innerHTML = '<p>Deslize para cima para continuar nossa jornada de amor...</p>';
   unlockMessage.classList.add('show-unlock');
   swipeInstruction.style.display = 'none';
   
