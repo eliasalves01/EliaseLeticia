@@ -101,11 +101,6 @@ let header;
 let main;
 let audio;
 
-// Variáveis para Web Audio API
-let audioContext;
-let audioSource;
-let gainNode;
-
 // Inicialização quando o DOM estiver pronto
 document.addEventListener('DOMContentLoaded', function() {
   // Inicializar as referências DOM
@@ -797,16 +792,7 @@ function showNextText() {
       if (audio) {
         currentBgMusicIndex = 2;
         audio.src = bgMusicPlaylist[2].src;
-        audio.load();
-        const playPromise = audio.play();
-        if (playPromise !== undefined) {
-          playPromise.then(() => {
-            if (audio.duration) { // Verificar se a duração está disponível
-              audio.currentTime = 16;
-              console.log("Fallback: definiu tempo da música 2 para 16s");
-            }
-          }).catch(e => console.error("Erro no fallback de música:", e));
-        }
+        audio.play().catch(e => console.error("Erro no fallback de música:", e));
       }
     }
   } else if (current === 8) {
@@ -820,7 +806,6 @@ function showNextText() {
       if (audio) {
         currentBgMusicIndex = 0;
         audio.src = bgMusicPlaylist[0].src;
-        audio.load();
         audio.play().catch(e => console.error("Erro no fallback de música:", e));
       }
     }
@@ -835,7 +820,6 @@ function showNextText() {
       if (audio) {
         currentBgMusicIndex = 0;
         audio.src = bgMusicPlaylist[0].src;
-        audio.load();
         audio.play().catch(e => console.error("Erro no fallback de música:", e));
       }
     }
@@ -1582,31 +1566,6 @@ function setupBgMusicPlaylist() {
     return;
   }
   
-  // Inicializar Web Audio API para usar em iOS
-  const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
-  if (isIOS) {
-    try {
-      // Iniciar o AudioContext durante uma interação do usuário (quando chamar setupBgMusicPlaylist)
-      audioContext = new (window.AudioContext || window.webkitAudioContext)();
-      console.log("AudioContext inicializado para iOS");
-      
-      // Criar gain node para controle de volume
-      gainNode = audioContext.createGain();
-      gainNode.connect(audioContext.destination);
-      
-      // Garantir que o audioContext esteja executando
-      if (audioContext.state === 'suspended') {
-        audioContext.resume().then(() => {
-          console.log("AudioContext resumed em iOS");
-        }).catch(err => {
-          console.error("Erro ao resumir AudioContext:", err);
-        });
-      }
-    } catch (error) {
-      console.error("Erro ao inicializar Web Audio API:", error);
-    }
-  }
-  
   // Inicializar o amostrador de música flutuante
   setupFloatingMusicPlayer();
   
@@ -1908,102 +1867,16 @@ function fadeToSong(songIndex) {
     return;
   }
   
-  // Se for iOS, usar Web Audio API para transição suave
-  if (isIOS) {
-    console.log(`Transição para música ${songIndex} em iOS usando Web Audio API`);
+  // Em dispositivos móveis, especialmente iOS, as transições suaves podem não funcionar bem
+  // Então usamos uma abordagem mais direta
+  if (isMobile) {
+    console.log(`Transição para música ${songIndex} em dispositivo móvel`);
     
-    try {
-      // Inicializar Web Audio API se ainda não estiver inicializada
-      if (!audioContext) {
-        audioContext = new (window.AudioContext || window.webkitAudioContext)();
-        // Criar gainNode para controlar volume
-        gainNode = audioContext.createGain();
-        gainNode.connect(audioContext.destination);
-      }
-      
-      // Se já existe um audioSource, fazer fade out
-      if (audioSource) {
-        const fadeOutDuration = 1.5; // segundos
-        const currentTime = audioContext.currentTime;
-        gainNode.gain.setValueAtTime(gainNode.gain.value, currentTime);
-        gainNode.gain.linearRampToValueAtTime(0, currentTime + fadeOutDuration);
-        
-        // Programar a parada do source atual
-        setTimeout(() => {
-          if (audioSource) {
-            audioSource.disconnect();
-            audioSource = null;
-          }
-        }, fadeOutDuration * 1000);
-      }
-      
-      // Mudar para a nova música
-      currentBgMusicIndex = songIndex;
-      
-      // Criar novo elemento de áudio para a nova música
-      const newAudio = new Audio();
-      newAudio.src = bgMusicPlaylist[songIndex].src;
-      newAudio.preload = 'auto';
-      
-      // Quando os metadados estiverem carregados, conectar à Web Audio API
-      newAudio.addEventListener('canplaythrough', function onCanPlay() {
-        // Remover o listener para evitar chamadas duplicadas
-        newAudio.removeEventListener('canplaythrough', onCanPlay);
-        
-        try {
-          // Definir tempo inicial para música 2 (I Wanna Be Yours)
-          if (songIndex === 2) {
-            newAudio.currentTime = 16;
-            console.log("Música 2 iniciada em 16s (iOS)");
-          }
-          
-          // Criar novo source a partir do elemento de áudio
-          audioSource = audioContext.createMediaElementSource(newAudio);
-          audioSource.connect(gainNode);
-          
-          // Iniciar a reprodução
-          newAudio.play().then(() => {
-            // Fazer fade in
-            const fadeInDuration = 1.5; // segundos
-            const currentTime = audioContext.currentTime;
-            gainNode.gain.setValueAtTime(0, currentTime);
-            gainNode.gain.linearRampToValueAtTime(1, currentTime + fadeInDuration);
-            
-            // Substituir o elemento de áudio principal
-            audio = newAudio;
-            
-            // Atualizar a interface do player
-            updateFloatingMusicPlayer();
-          }).catch(error => {
-            console.error("Erro ao reproduzir áudio em iOS:", error);
-          });
-        } catch (e) {
-          console.error("Erro ao configurar Web Audio API:", e);
-          
-          // Fallback: transição direta sem fade
-          audio.src = bgMusicPlaylist[songIndex].src;
-          if (songIndex === 2) audio.currentTime = 16;
-          audio.play().catch(err => console.error("Erro no fallback de iOS:", err));
-          updateFloatingMusicPlayer();
-        }
-      });
-      
-      // Iniciar carregamento
-      newAudio.load();
-      
-      return; // Encerrar a função para iOS
-    } catch (error) {
-      console.error("Erro ao usar Web Audio API em iOS:", error);
-      // Continuar com o método de fallback abaixo
+    // Em iOS não manipulamos volume programaticamente
+    if (!isIOS) {
+      // Reduzir volume rapidamente (dispositivos Android)
+      audio.volume = 0.1;
     }
-  }
-  
-  // Para Android
-  if (isMobile && !isIOS) {
-    console.log(`Transição para música ${songIndex} em Android`);
-    
-    // Reduzir volume rapidamente (dispositivos Android)
-    audio.volume = 0.1;
     
     // Mudar música
     currentBgMusicIndex = songIndex;
@@ -2022,15 +1895,15 @@ function fadeToSong(songIndex) {
           // Só podemos definir currentTime após um play bem-sucedido em mobile
           setTimeout(() => {
             audio.currentTime = 16;
-            console.log("Música 2 iniciada em 16s (Android)");
+            console.log("Música 2 iniciada em 16s (dispositivo móvel)");
             
-            // Restaurar volume
-            setTimeout(() => {
+            // Restaurar volume (apenas Android)
+            if (!isIOS) {
               audio.volume = 1.0;
-            }, 500);
+            }
           }, 100);
         }).catch(error => {
-          console.error("Erro ao iniciar reprodução em Android:", error);
+          console.error("Erro ao iniciar reprodução em mobile:", error);
           // Tentar novamente sem definir o tempo
           audio.play().catch(e => console.error("Segundo erro ao reproduzir:", e));
         });
@@ -2038,19 +1911,21 @@ function fadeToSong(songIndex) {
     } else {
       // Para outras músicas, apenas reproduzir
       audio.play().then(() => {
-        // Restaurar volume gradualmente
-        setTimeout(() => {
-          audio.volume = 1.0;
-        }, 500);
+        if (!isIOS) {
+          // Restaurar volume gradualmente (Android)
+          setTimeout(() => {
+            audio.volume = 1.0;
+          }, 500);
+        }
       }).catch(error => {
-        console.error("Erro ao iniciar reprodução em Android:", error);
+        console.error("Erro ao iniciar reprodução em mobile:", error);
       });
     }
     
     // Atualizar a interface do player
     updateFloatingMusicPlayer();
     
-    return; // Encerrar a função para Android
+    return; // Encerrar a função para dispositivos móveis
   }
   
   // Código para desktop (transição suave)
