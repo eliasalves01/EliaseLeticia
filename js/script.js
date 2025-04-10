@@ -10,6 +10,8 @@ const musicCards = document.getElementById('music-cards');
 const indicators = document.querySelectorAll('.indicator');
 const unlockMessage = document.getElementById('unlock-message');
 const swipeInstruction = document.querySelector('.swipe-instruction');
+let introFinished = false; // Flag para controlar se a introdução já foi finalizada
+let textTransitionInProgress = false; // Flag para controlar a transição entre textos
 
 // Variáveis para o modal de mídia
 let currentMediaIndex = 0;
@@ -705,14 +707,23 @@ function showNextText() {
     return;
   }
 
+  // Prevenir chamadas sobrepostas durante transições
+  if (textTransitionInProgress) {
+    console.log("Transição de texto em andamento, ignorando chamada sobreposta");
+    return;
+  }
+
   // Verifica se já mostrou todos os textos
   if (current >= texts.length) {
-    console.log("Todos os textos foram exibidos, finalizando introdução");
+    console.log(`Todos os textos foram exibidos (${current}/${texts.length}), finalizando introdução`);
     fadeOutIntro();
     return;
   }
 
-  console.log(`Preparando texto ${current+1}/${texts.length}`);
+  // Marcar que uma transição está em andamento
+  textTransitionInProgress = true;
+
+  console.log(`Preparando texto ${current+1}/${texts.length} (índice: ${current})`);
   
   // Reset do texto para garantir animação limpa
   textEl.classList.remove("visible");
@@ -725,8 +736,9 @@ function showNextText() {
       
       if (!currentText) {
         console.error(`Texto ${current} não encontrado!`);
-        current++;
-        setTimeout(showNextText, 800);
+        // Não avançamos o contador aqui, apenas finalizamos
+        textTransitionInProgress = false;
+        fadeOutIntro();
         return;
       }
       
@@ -760,12 +772,18 @@ function showNextText() {
             
             // Redefine altura mínima para evitar espaços em branco
             textEl.style.minHeight = "auto";
+            
+            // Liberar a flag de transição
+            textTransitionInProgress = false;
           }, 500);
         }, isMobile ? 4000 : 3500); // Tempo extra para leitura em dispositivos móveis
         return;
       }
       
-      // Transição normal entre textos
+      // Transição normal entre textos - usando uma abordagem de promessa para evitar chamadas paralelas
+      let timeoutDuration = isMobile ? 4000 : 3500;
+      
+      // Exibir o texto atual por um tempo antes de avançar para o próximo
       setTimeout(() => {
         // Fade-out do texto atual
         textEl.classList.remove("visible");
@@ -773,19 +791,46 @@ function showNextText() {
         // Avança APENAS para o próximo texto, sem pular
         current++;
         
-        console.log(`Avançando para o próximo texto: ${current}`);
+        console.log(`Avançando para o próximo texto: ${current}/${texts.length}`);
+        
+        // Verificação extra para garantir que não excedemos o limite
+        if (current >= texts.length) {
+          console.log("Último texto exibido, finalizando introdução");
+          textTransitionInProgress = false;
+          fadeOutIntro();
+          return;
+        }
         
         // Espera o fade-out terminar antes de mostrar o próximo texto
-        setTimeout(showNextText, 800);
-      }, isMobile ? 4000 : 3500); // Ajustando o tempo para ser consistente
+        // Usando um timeout mais longo para garantir que o DOM seja atualizado completamente
+        setTimeout(() => {
+          // Liberar a flag de transição antes de chamar o próximo texto
+          textTransitionInProgress = false;
+          
+          // Chamar diretamente a próxima exibição como uma função separada
+          showNextTextWithDelay();
+        }, 800);
+      }, timeoutDuration);
+      
     } catch (error) {
       console.error("Erro ao exibir texto:", error);
-      // Em caso de erro, tenta recuperar sem avançar muito
+      // Em caso de erro, liberar a flag de transição
+      textTransitionInProgress = false;
+      // Tenta recuperar sem avançar muito
       setTimeout(() => {
-        showNextText();
+        fadeOutIntro();
       }, 1000);
     }
   }, 400); // Aumento do tempo de espera entre textos para garantir a transição
+}
+
+// Função auxiliar para mostrar o próximo texto com um pequeno atraso
+function showNextTextWithDelay() {
+  // Pequeno atraso adicional para garantir que a animação anterior terminou
+  setTimeout(() => {
+    console.log(`Chamando showNextText para o texto ${current+1}...`);
+    showNextText();
+  }, 200);
 }
 
 // Função auxiliar para preparar o elemento de texto com altura adequada
@@ -812,26 +857,51 @@ function prepareTextElement(text) {
 
 // Função para finalizar a introdução e mostrar a seção principal
 function fadeOutIntro() {
-  introEl.style.display = "none";
-  musicSection.classList.remove("active");
+  // Evitar execução duplicada
+  if (introFinished) {
+    console.log("Introdução já foi finalizada, ignorando chamada");
+    return;
+  }
   
-  header.style.display = "flex";
-  main.style.display = "block";
+  console.log("Executando fadeOutIntro() - finalizando introdução");
+  introFinished = true;
   
+  // Garantir que o elemento texto tenha um fade-out suave
+  if (textEl) {
+    textEl.classList.remove("visible");
+  }
+  
+  // Adicionar um pequeno delay antes de ocultar os elementos
   setTimeout(() => {
-    header.classList.add("show");
-    main.classList.add("show");
-    setupVideo();
+    if (introEl) introEl.style.display = "none";
+    if (musicSection) musicSection.classList.remove("active");
     
-    // Permite rolagem na seção final
-    document.body.classList.remove('no-scroll');
-  }, 100);
+    if (header) header.style.display = "flex";
+    if (main) main.style.display = "block";
+    
+    setTimeout(() => {
+      if (header) header.classList.add("show");
+      if (main) main.classList.add("show");
+      setupVideo();
+      
+      // Permite rolagem na seção final
+      document.body.classList.remove('no-scroll');
+      
+      console.log("Transição para a seção principal concluída");
+    }, 100);
+  }, 500);
 }
 
 function continueAfterMusic() {
   if (!isMusicSectionActive || currentCard !== totalCards - 1) return;
   
   console.log("Continuando após a seção de música...");
+  
+  // Evitar múltiplas chamadas
+  if (document.querySelector('.music-section.fade-out')) {
+    console.log("Transição já em andamento, ignorando");
+    return;
+  }
   
   bgMusicCurrentTime = audio.currentTime;
   
@@ -865,7 +935,33 @@ function continueAfterMusic() {
     }
   }
   
-  setTimeout(() => {
+  // Limpeza de eventos existentes para evitar duplicação
+  musicSection.removeEventListener('transitionend', musicTransitionEndHandler);
+  
+  // Função para processar a transição após a animação de fade-out completa
+  function musicTransitionEndHandler(e) {
+    // Só prosseguir se o evento for do musicSection e a propriedade opacity
+    if (e.target !== musicSection || e.propertyName !== 'opacity') return;
+    
+    console.log("Transição de saída da seção de música concluída");
+    musicSection.removeEventListener('transitionend', musicTransitionEndHandler);
+    continueWithTexts();
+  }
+  
+  // Adicionar o listener para o evento de fim da transição
+  musicSection.addEventListener('transitionend', musicTransitionEndHandler);
+  
+  // Timeout de segurança caso o evento transitionend não dispare
+  setTimeout(continueWithTexts, 1200);
+  
+  // Função para continuar a exibição dos textos após a seção de música
+  function continueWithTexts() {
+    // Evitar execução duplicada
+    if (!musicSection.classList.contains('active')) {
+      console.log("Já removemos a seção de música, ignorando");
+      return;
+    }
+    
     musicSection.classList.remove("active", "fade-out");
     isMusicSectionActive = false;
     
@@ -882,14 +978,29 @@ function continueAfterMusic() {
     
     // Definir o próximo texto para exibir - INÍCIO DO 5º TEXTO (ÍNDICE 4)
     current = 4; 
-    console.log(`Voltando à sequência de textos a partir do índice ${current}`);
+    console.log(`Voltando à sequência de textos a partir do índice ${current}, próximo texto: ${texts[current].substring(0, 30)}...`);
     
     // Permitir que a interface seja redesenhada antes de animar o texto
     setTimeout(() => {
-      // Usar a função principal de exibição para garantir que todos os textos sejam exibidos
-      showNextText();
-    }, 500);
-  }, 1000);
+      // Chamar de forma segura a exibição do próximo texto
+      showNextTextInSequence();
+    }, 700);
+  }
+}
+
+// Função para garantir que o próximo texto seja exibido na sequência correta
+function showNextTextInSequence() {
+  console.log(`Preparando para mostrar texto ${current+1}/${texts.length} após seção de música`);
+  
+  // Inicializar variáveis novamente, se necessário
+  if (!textEl) textEl = document.getElementById("text");
+  if (!introEl) introEl = document.getElementById("intro");
+  
+  // Garantir que a interface esteja pronta
+  requestAnimationFrame(() => {
+    // Chamar showNextText diretamente
+    showNextText();
+  });
 }
 
 // Função para gerar estrelas
