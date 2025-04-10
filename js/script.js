@@ -16,8 +16,8 @@ let currentMediaIndex = 0;
 const galleryMedia = [
   { src: "assets/foto1.jpg", caption: "Nosso primeiro encontro", type: "image" },
   { src: "assets/foto2.jpeg", caption: "Nosso passeio especial", type: "image" },
-  { src: "assets/video.mp4", caption: "Nosso vídeo especial", type: "video" },
-  { src: "assets/foto1.jpg", caption: "Mais um momento especial", type: "image" }
+  { src: "assets/video2.mp4", caption: "Nosso vídeo especial", type: "video" },
+  { src: "assets/foto3.jpeg", caption: "Mais um momento especial", type: "image" }
 ];
 
 // Variáveis para o carrossel da galeria
