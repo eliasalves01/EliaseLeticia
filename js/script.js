@@ -25,7 +25,7 @@ let galleryIndex = 0;
 
 // Textos para a introdução
 const texts = [
-  "1No instante em que nossos olhos se encontraram pela primeira vez...",
+  "No instante em que nossos olhos se encontraram pela primeira vez...",
   "Eu senti que o universo conspirava para nos unir",
   "Seu sorriso iluminou meu mundo de uma forma que nunca imaginei possível",
   "E desde então, cada dia ao seu lado tem sido uma bênção",
@@ -770,16 +770,18 @@ function showNextText() {
         // Fade-out do texto atual
         textEl.classList.remove("visible");
         
-        // Avança para o próximo texto
+        // Avança APENAS para o próximo texto, sem pular
         current++;
+        
+        console.log(`Avançando para o próximo texto: ${current}`);
         
         // Espera o fade-out terminar antes de mostrar o próximo texto
         setTimeout(showNextText, 800);
-      }, isMobile ? 4500 : 4000); // Tempo extra para leitura
+      }, isMobile ? 4000 : 3500); // Ajustando o tempo para ser consistente
     } catch (error) {
       console.error("Erro ao exibir texto:", error);
+      // Em caso de erro, tenta recuperar sem avançar muito
       setTimeout(() => {
-        current++;
         showNextText();
       }, 1000);
     }
@@ -878,8 +880,8 @@ function continueAfterMusic() {
       audio.play().catch(err => console.log("Erro ao iniciar música:", err));
     }
     
-    // Definir o próximo texto para exibir
-    current = 4; // Começar do 6º texto (índice 5) após a seção de música
+    // Definir o próximo texto para exibir - INÍCIO DO 5º TEXTO (ÍNDICE 4)
+    current = 4; 
     console.log(`Voltando à sequência de textos a partir do índice ${current}`);
     
     // Permitir que a interface seja redesenhada antes de animar o texto
