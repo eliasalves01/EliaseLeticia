@@ -11,6 +11,18 @@ const indicators = document.querySelectorAll('.indicator');
 const unlockMessage = document.getElementById('unlock-message');
 const swipeInstruction = document.querySelector('.swipe-instruction');
 
+// Variáveis para o modal de mídia
+let currentMediaIndex = 0;
+const galleryMedia = [
+  { src: "assets/foto1.jpg", caption: "Nosso primeiro encontro", type: "image" },
+  { src: "assets/foto2.jpeg", caption: "Nosso passeio especial", type: "image" },
+  { src: "assets/video.mp4", caption: "Nosso vídeo especial", type: "video" },
+  { src: "assets/foto1.jpg", caption: "Mais um momento especial", type: "image" }
+];
+
+// Variáveis para o carrossel da galeria
+let galleryIndex = 0;
+
 // Textos para a introdução
 const texts = [
   "No instante em que nossos olhos se encontraram pela primeira vez...",
@@ -46,6 +58,9 @@ document.addEventListener('DOMContentLoaded', function() {
   setupVideoModal();
   setupMusicPlayers();
   setupCarousel();
+  setupMediaModal();
+  setupGalleryCarousel();
+  setupVideoPreview();
   
   // Tenta autoplay após interação do usuário
   document.body.addEventListener('click', function initialPlay() {
@@ -63,6 +78,130 @@ document.addEventListener('DOMContentLoaded', function() {
   
   // Impede a rolagem em telas específicas
   prevenirRolagem();
+
+  // Contador para o carrossel
+  let currentIndex = 0;
+  const testimonials = document.querySelectorAll('.testimonial');
+  const totalTestimonials = testimonials.length;
+
+  // Inicializar o carrossel
+  updateTestimonialDisplay();
+
+  // Botões do carrossel
+  document.querySelector('.prev-btn').addEventListener('click', function() {
+    currentIndex = (currentIndex - 1 + totalTestimonials) % totalTestimonials;
+    updateTestimonialDisplay();
+  });
+
+  document.querySelector('.next-btn').addEventListener('click', function() {
+    currentIndex = (currentIndex + 1) % totalTestimonials;
+    updateTestimonialDisplay();
+  });
+
+  // Galeria de mídia
+  const galleryItems = document.querySelectorAll('.gallery-item, .video-item');
+  const modal = document.getElementById('media-modal');
+  const modalContent = document.querySelector('.modal-content');
+  const mediaContainer = document.querySelector('.modal-media-container');
+  const modalCaption = document.querySelector('.modal-caption');
+  const closeBtn = document.querySelector('.modal-close');
+  const prevBtn = document.querySelector('.modal-nav-prev');
+  const nextBtn = document.querySelector('.modal-nav-next');
+  
+  let galleryIndex = 0;
+  const galleryMedia = [];
+  
+  // Coletar informações de mídia da galeria
+  galleryItems.forEach((item, index) => {
+    const isVideo = item.classList.contains('video-item');
+    const src = isVideo ? item.getAttribute('data-video') : item.querySelector('img').src;
+    const alt = item.querySelector('img').alt;
+    
+    galleryMedia.push({
+      isVideo: isVideo,
+      src: src,
+      alt: alt
+    });
+    
+    // Adicionar evento de clique
+    item.addEventListener('click', function() {
+      galleryIndex = index;
+      openModal(galleryIndex);
+    });
+  });
+  
+  // Funções para abrir/fechar modal
+  function openModal(index) {
+    const media = galleryMedia[index];
+    
+    // Limpar conteúdo anterior
+    mediaContainer.innerHTML = '';
+    
+    // Criar o elemento correto baseado no tipo de mídia
+    if (media.isVideo) {
+      const video = document.createElement('video');
+      video.src = media.src;
+      video.controls = true;
+      video.autoplay = true;
+      mediaContainer.appendChild(video);
+    } else {
+      const img = document.createElement('img');
+      img.src = media.src;
+      img.alt = media.alt;
+      mediaContainer.appendChild(img);
+    }
+    
+    // Atualizar legenda
+    modalCaption.textContent = media.alt;
+    
+    // Mostrar modal
+    modal.style.display = 'block';
+  }
+  
+  function closeModal() {
+    // Parar vídeo se estiver sendo reproduzido
+    const video = mediaContainer.querySelector('video');
+    if (video) {
+      video.pause();
+    }
+    
+    modal.style.display = 'none';
+  }
+  
+  // Eventos para navegação na galeria
+  closeBtn.addEventListener('click', closeModal);
+  
+  prevBtn.addEventListener('click', function() {
+    galleryIndex = (galleryIndex - 1 + galleryMedia.length) % galleryMedia.length;
+    openModal(galleryIndex);
+  });
+  
+  nextBtn.addEventListener('click', function() {
+    galleryIndex = (galleryIndex + 1) % galleryMedia.length;
+    openModal(galleryIndex);
+  });
+  
+  // Fechar modal ao clicar fora do conteúdo
+  modal.addEventListener('click', function(e) {
+    if (e.target === modal) {
+      closeModal();
+    }
+  });
+  
+  // Navegar com as teclas
+  document.addEventListener('keydown', function(e) {
+    if (modal.style.display === 'block') {
+      if (e.key === 'Escape') {
+        closeModal();
+      } else if (e.key === 'ArrowLeft') {
+        galleryIndex = (galleryIndex - 1 + galleryMedia.length) % galleryMedia.length;
+        openModal(galleryIndex);
+      } else if (e.key === 'ArrowRight') {
+        galleryIndex = (galleryIndex + 1) % galleryMedia.length;
+        openModal(galleryIndex);
+      }
+    }
+  });
 });
 
 // Impede a rolagem quando em telas específicas
@@ -692,4 +831,385 @@ function handleWheel(e) {
     e.preventDefault();
     continueAfterMusic();
   }
+}
+
+// Funções para o modal de mídia (imagens e vídeos)
+function setupMediaModal() {
+  const mediaModal = document.getElementById('media-modal');
+  const closeButton = document.getElementById('close-media-modal');
+  const mediaContainer = document.getElementById('media-container');
+  
+  if (!mediaModal || !closeButton || !mediaContainer) {
+    console.error('Elementos do modal de mídia não encontrados');
+    return;
+  }
+  
+  const modalContainer = mediaModal.querySelector('.relative');
+  
+  // Adicionar botões de navegação se ainda não existirem
+  if (!document.querySelector('.media-nav.prev')) {
+    const prevButton = document.createElement('button');
+    prevButton.className = 'media-nav prev absolute left-0 top-1/2 transform -translate-y-1/2 text-white text-4xl bg-black bg-opacity-30 p-3 rounded-r-lg';
+    prevButton.innerHTML = '❮';
+    prevButton.addEventListener('click', (e) => {
+      e.stopPropagation();
+      navigateMedia('prev');
+    });
+    modalContainer.appendChild(prevButton);
+  }
+  
+  if (!document.querySelector('.media-nav.next')) {
+    const nextButton = document.createElement('button');
+    nextButton.className = 'media-nav next absolute right-0 top-1/2 transform -translate-y-1/2 text-white text-4xl bg-black bg-opacity-30 p-3 rounded-l-lg';
+    nextButton.innerHTML = '❯';
+    nextButton.addEventListener('click', (e) => {
+      e.stopPropagation();
+      navigateMedia('next');
+    });
+    modalContainer.appendChild(nextButton);
+  }
+  
+  // Fechar quando clicar no botão de fechar
+  closeButton.addEventListener('click', () => {
+    pauseCurrentMedia();
+    mediaModal.classList.add('hidden');
+    document.body.style.overflow = 'auto';
+  });
+  
+  // Fechar quando clicar fora da imagem
+  mediaModal.addEventListener('click', (e) => {
+    if (e.target === mediaModal) {
+      pauseCurrentMedia();
+      mediaModal.classList.add('hidden');
+      document.body.style.overflow = 'auto';
+    }
+  });
+  
+  // Navegação com teclado
+  document.addEventListener('keydown', (e) => {
+    if (!mediaModal.classList.contains('hidden')) {
+      if (e.key === 'Escape') {
+        pauseCurrentMedia();
+        mediaModal.classList.add('hidden');
+        document.body.style.overflow = 'auto';
+      } else if (e.key === 'ArrowLeft') {
+        navigateMedia('prev');
+      } else if (e.key === 'ArrowRight') {
+        navigateMedia('next');
+      }
+    }
+  });
+}
+
+function pauseCurrentMedia() {
+  const videoElement = document.querySelector('#media-container video');
+  if (videoElement) {
+    videoElement.pause();
+  }
+  
+  // Retomar música de fundo se estiver pausada
+  const bgMusic = document.getElementById('bg-music');
+  if (bgMusic && bgMusic.paused) {
+    bgMusic.play().catch(e => console.log('Não foi possível retomar a música de fundo:', e));
+  }
+}
+
+function openMediaModal(mediaSrc, caption, type) {
+  const mediaModal = document.getElementById('media-modal');
+  const mediaContainer = document.getElementById('media-container');
+  const mediaCaption = document.getElementById('media-caption');
+  const bgMusic = document.getElementById('bg-music');
+  
+  if (!mediaModal || !mediaContainer || !mediaCaption) {
+    console.error('Elementos do modal de mídia não encontrados');
+    return;
+  }
+  
+  // Pausar música de fundo se estiver tocando e o tipo for vídeo
+  if (type === 'video' && bgMusic && !bgMusic.paused) {
+    bgMusic.pause();
+  }
+  
+  // Encontrar o índice da mídia clicada
+  currentMediaIndex = galleryMedia.findIndex(media => 
+    media.src === mediaSrc && media.type === type
+  );
+  
+  if (currentMediaIndex === -1) {
+    console.warn('Mídia não encontrada no array galleryMedia:', mediaSrc);
+    currentMediaIndex = 0;
+  }
+  
+  // Limpar o container
+  mediaContainer.innerHTML = '';
+  
+  // Criar o elemento apropriado baseado no tipo
+  if (type === 'image') {
+    const imgElement = document.createElement('img');
+    imgElement.src = mediaSrc;
+    imgElement.alt = caption;
+    imgElement.className = 'max-w-full max-h-[80vh] mx-auto rounded-lg';
+    mediaContainer.appendChild(imgElement);
+  } else if (type === 'video') {
+    const videoElement = document.createElement('video');
+    videoElement.src = mediaSrc;
+    videoElement.controls = true;
+    videoElement.autoplay = true;
+    videoElement.className = 'max-w-full max-h-[80vh] mx-auto rounded-lg';
+    mediaContainer.appendChild(videoElement);
+  }
+  
+  // Atualizar legenda
+  mediaCaption.textContent = caption;
+  
+  // Exibir o modal - removendo a classe hidden
+  mediaModal.classList.remove('hidden');
+  
+  // Verificar se o display é none e corrigi-lo
+  if (window.getComputedStyle(mediaModal).display === 'none') {
+    mediaModal.style.display = 'flex';
+  }
+  
+  document.body.style.overflow = 'hidden'; // Impedir rolagem
+}
+
+function navigateMedia(direction) {
+  // Pausar qualquer mídia atual
+  pauseCurrentMedia();
+  
+  if (direction === 'prev') {
+    currentMediaIndex = (currentMediaIndex - 1 + galleryMedia.length) % galleryMedia.length;
+  } else {
+    currentMediaIndex = (currentMediaIndex + 1) % galleryMedia.length;
+  }
+  
+  const mediaItem = galleryMedia[currentMediaIndex];
+  const mediaContainer = document.getElementById('media-container');
+  const mediaCaption = document.getElementById('media-caption');
+  const bgMusic = document.getElementById('bg-music');
+  
+  // Pausar música de fundo se estiver tocando e o tipo for vídeo
+  if (mediaItem.type === 'video' && bgMusic && !bgMusic.paused) {
+    bgMusic.pause();
+  }
+  
+  // Aplicar efeito de transição
+  mediaContainer.style.opacity = '0';
+  mediaCaption.style.opacity = '0';
+  
+  setTimeout(() => {
+    // Limpar o container
+    mediaContainer.innerHTML = '';
+    
+    // Criar o elemento apropriado baseado no tipo
+    if (mediaItem.type === 'image') {
+      const imgElement = document.createElement('img');
+      imgElement.src = mediaItem.src;
+      imgElement.alt = mediaItem.caption;
+      imgElement.className = 'max-w-full max-h-[80vh] mx-auto rounded-lg';
+      mediaContainer.appendChild(imgElement);
+    } else if (mediaItem.type === 'video') {
+      const videoElement = document.createElement('video');
+      videoElement.src = mediaItem.src;
+      videoElement.controls = true;
+      videoElement.autoplay = true;
+      videoElement.className = 'max-w-full max-h-[80vh] mx-auto rounded-lg';
+      mediaContainer.appendChild(videoElement);
+    }
+    
+    // Atualizar legenda
+    mediaCaption.textContent = mediaItem.caption;
+    
+    // Restaurar opacidade
+    mediaContainer.style.opacity = '1';
+    mediaCaption.style.opacity = '1';
+  }, 300);
+}
+
+// Função para atualizar o display do carrossel
+function updateTestimonialDisplay() {
+  const testimonials = document.querySelectorAll('.testimonial');
+  testimonials.forEach((testimonial, index) => {
+    testimonial.style.display = index === currentIndex ? 'block' : 'none';
+  });
+}
+
+// Função para configurar o carrossel da galeria em mobile
+function setupGalleryCarousel() {
+  const gallery = document.querySelector('.gallery');
+  const paginationDots = document.querySelectorAll('.gallery-pagination-dot');
+  
+  if (!gallery || !paginationDots.length) return;
+  
+  // Verificar se é mobile para mostrar ou esconder elementos
+  const isMobile = window.innerWidth <= 768;
+  const paginationContainer = document.querySelector('.gallery-pagination');
+  const swipeIndicator = document.querySelector('.gallery-swipe-indicator');
+  
+  if (paginationContainer) {
+    paginationContainer.style.display = isMobile ? 'flex' : 'none';
+  }
+  
+  if (swipeIndicator) {
+    swipeIndicator.style.display = isMobile ? 'flex' : 'none';
+  }
+  
+  // Atualizar visibilidade em resize
+  window.addEventListener('resize', function() {
+    const isMobileNow = window.innerWidth <= 768;
+    if (paginationContainer) {
+      paginationContainer.style.display = isMobileNow ? 'flex' : 'none';
+    }
+    if (swipeIndicator) {
+      swipeIndicator.style.display = isMobileNow ? 'flex' : 'none';
+    }
+  });
+  
+  // Detectar scroll da galeria para atualizar paginação
+  if (isMobile) {
+    gallery.addEventListener('scroll', function() {
+      debounce(updateGalleryPagination, 100)();
+    });
+    
+    // Inicializar paginação
+    updateGalleryPagination();
+    
+    // Adicionar evento de click em cada dot
+    paginationDots.forEach((dot, index) => {
+      dot.addEventListener('click', function() {
+        scrollToGalleryItem(index);
+      });
+    });
+  }
+}
+
+// Função para atualizar a paginação da galeria com base no scroll
+function updateGalleryPagination() {
+  const gallery = document.querySelector('.gallery');
+  const items = document.querySelectorAll('.gallery .gallery-item, .gallery .video-item');
+  const dots = document.querySelectorAll('.gallery-pagination-dot');
+  
+  if (!gallery || !items.length || !dots.length) return;
+  
+  // Calcular qual item está visível
+  const scrollPosition = gallery.scrollLeft;
+  const galleryWidth = gallery.offsetWidth;
+  const itemWidth = items[0].offsetWidth;
+  const activeIndex = Math.round(scrollPosition / itemWidth);
+  
+  // Atualizar paginação
+  dots.forEach((dot, index) => {
+    dot.classList.toggle('active', index === activeIndex);
+  });
+  
+  // Esconder indicador de swipe após o primeiro scroll
+  if (scrollPosition > 10) {
+    const swipeIndicator = document.querySelector('.gallery-swipe-indicator');
+    if (swipeIndicator) {
+      swipeIndicator.style.opacity = '0';
+    }
+  }
+}
+
+// Função para rolar para um item específico da galeria
+function scrollToGalleryItem(index) {
+  const gallery = document.querySelector('.gallery');
+  const items = document.querySelectorAll('.gallery .gallery-item, .gallery .video-item');
+  
+  if (!gallery || !items.length || index >= items.length) return;
+  
+  const item = items[index];
+  const itemLeft = item.offsetLeft;
+  gallery.scrollTo({
+    left: itemLeft - (gallery.offsetWidth - item.offsetWidth) / 2,
+    behavior: 'smooth'
+  });
+}
+
+// Função de debounce para limitar a frequência de chamadas
+function debounce(func, wait) {
+  let timeout;
+  return function() {
+    const context = this;
+    const args = arguments;
+    clearTimeout(timeout);
+    timeout = setTimeout(() => {
+      func.apply(context, args);
+    }, wait);
+  };
+}
+
+// Configuração dos previews de vídeo na galeria
+function setupVideoPreview() {
+  const videoItems = document.querySelectorAll('.video-item');
+  
+  videoItems.forEach(item => {
+    const previewVideo = item.querySelector('.video-preview');
+    
+    if (!previewVideo) return;
+    
+    // Definir os pontos de início e fim do loop do vídeo (em segundos)
+    const startTime = 2; // Começar em 2 segundos
+    const endTime = 8; // Terminar em 8 segundos
+    
+    // Carregar o vídeo
+    previewVideo.load();
+    
+    // Iniciar o preview automaticamente quando estiver pronto
+    previewVideo.addEventListener('loadeddata', () => {
+      // Definir o tempo inicial
+      previewVideo.currentTime = startTime;
+      
+      // Iniciar a reprodução
+      previewVideo.play().catch(error => console.error('Erro ao reproduzir vídeo:', error));
+      
+      // Verificar periodicamente se o vídeo saiu do intervalo definido
+      const checkTimeInterval = setInterval(() => {
+        if (previewVideo.currentTime >= endTime || previewVideo.currentTime < startTime) {
+          previewVideo.currentTime = startTime;
+        }
+      }, 500); // Verificar a cada meio segundo
+      
+      // Armazenar o intervalo no elemento para limpeza posterior
+      item.setAttribute('data-check-interval', checkTimeInterval);
+    });
+    
+    // Pausar o preview quando o modal for aberto
+    item.addEventListener('click', () => {
+      previewVideo.pause();
+      
+      // Limpar o intervalo de verificação
+      const checkTimeInterval = parseInt(item.getAttribute('data-check-interval'), 10);
+      if (checkTimeInterval) {
+        clearInterval(checkTimeInterval);
+      }
+    });
+    
+    // Obter a duração real do vídeo para o indicador de duração
+    previewVideo.addEventListener('loadedmetadata', () => {
+      const duration = previewVideo.duration;
+      const minutes = Math.floor(duration / 60);
+      const seconds = Math.floor(duration % 60);
+      
+      const durationElement = item.querySelector('.video-duration');
+      if (durationElement) {
+        durationElement.textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+      }
+    });
+    
+    // Reiniciar o preview quando o modal for fechado
+    document.getElementById('close-media-modal').addEventListener('click', () => {
+      previewVideo.currentTime = startTime;
+      previewVideo.play().catch(error => console.error('Erro ao reiniciar preview:', error));
+      
+      // Configurar novo intervalo
+      const checkTimeInterval = setInterval(() => {
+        if (previewVideo.currentTime >= endTime || previewVideo.currentTime < startTime) {
+          previewVideo.currentTime = startTime;
+        }
+      }, 500);
+      
+      item.setAttribute('data-check-interval', checkTimeInterval);
+    });
+  });
 }

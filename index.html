@@ -137,6 +137,14 @@
     </div>
   </div>
 
+  <div id="image-modal" class="hidden fixed inset-0 z-50 bg-black bg-opacity-95 flex items-center justify-center">
+    <div class="relative w-full max-w-5xl flex flex-col items-center">
+      <button id="close-image-modal" class="absolute -top-10 right-0 text-white text-2xl">✕</button>
+      <img id="modal-image" class="max-w-full max-h-90vh rounded-lg" src="" alt="Imagem ampliada">
+      <div id="image-caption" class="text-white text-xl mt-4 text-center"></div>
+    </div>
+  </div>
+
   <main>
     <section class="banner">
       <video id="main-video" autoplay muted loop playsinline>
@@ -168,13 +176,51 @@
     <section class="moments">
       <h2>Momentos Inesquecíveis</h2>
       <div class="gallery">
-        <img src="assets/foto1.jpg" alt="Momento 1">
-        <img src="assets/foto2.jpeg" alt="Momento 1">
-        <img src="assets/foto3.jpeg" alt="Momento 1">
-        <img src="assets/foto1.jpg" alt="Momento 1">
+        <div class="gallery-item" onclick="openMediaModal('assets/foto1.jpg', 'Nosso primeiro encontro', 'image')">
+          <img src="assets/foto1.jpg" alt="Momento 1">
+        </div>
+        <div class="gallery-item" onclick="openMediaModal('assets/foto2.jpeg', 'Nosso passeio especial', 'image')">
+          <img src="assets/foto2.jpeg" alt="Momento 2">
+        </div>
+        <div class="video-item" onclick="openMediaModal('assets/video.mp4', 'Nosso vídeo especial', 'video')">
+          <div class="video-preview-container">
+            <video class="video-preview" muted loop playsinline>
+              <source src="assets/video.mp4" type="video/mp4">
+            </video>
+            <div class="video-preview-overlay"></div>
+          </div>
+          <div class="video-icon">▶</div>
+          <div class="video-duration">0:30</div>
+        </div>
+        <div class="gallery-item" onclick="openMediaModal('assets/foto1.jpg', 'Mais um momento especial', 'image')">
+          <img src="assets/foto1.jpg" alt="Momento 4">
+        </div>
+      </div>
+      <!-- Indicadores de paginação para mobile -->
+      <div class="gallery-pagination">
+        <div class="gallery-pagination-dot active" data-index="0"></div>
+        <div class="gallery-pagination-dot" data-index="1"></div>
+        <div class="gallery-pagination-dot" data-index="2"></div>
+        <div class="gallery-pagination-dot" data-index="3"></div>
+      </div>
+      <!-- Indicador de swipe para mobile -->
+      <div class="gallery-swipe-indicator">
+        <span>Deslize para ver mais</span>
+        <span class="gallery-swipe-icon">→</span>
       </div>
     </section>
   </main>
+
+  <!-- Modal para imagens e vídeos -->
+  <div id="media-modal" class="hidden fixed inset-0 z-50 bg-black bg-opacity-95 flex items-center justify-center">
+    <div class="relative w-full max-w-5xl flex flex-col items-center">
+      <button id="close-media-modal" class="absolute -top-10 right-0 text-white text-2xl">✕</button>
+      <div id="media-container" class="w-full flex justify-center">
+        <!-- O conteúdo (imagem ou vídeo) será inserido aqui via JavaScript -->
+      </div>
+      <div id="media-caption" class="text-white text-xl mt-4 text-center"></div>
+    </div>
+  </div>
 
   <script src="/js/script.js"></script>
 </body>
