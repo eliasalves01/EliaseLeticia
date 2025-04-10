@@ -102,6 +102,12 @@ body {
   background-clip: text;
   color: transparent;
   padding: 0 10px;
+  text-align: center;
+  margin: 0 auto;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  height: auto;
+  min-height: fit-content;
 }
 
 .visible {
@@ -924,32 +930,44 @@ main.show {
 
 @media (max-width: 768px) {
   :root {
-    --font-size-xl: 3rem;
+    --font-size-xl: 2.8rem;
     --font-size-lg: 1.8rem;
     --font-size-md: 1.2rem;
-    --font-size-sm: 0.95rem;
+    --font-size-sm: 0.9rem;
     --font-size-xs: 0.8rem;
   }
   
-  /* HEADER */
+  /* Correções para a introdução em dispositivos móveis */
+  .intro {
+    padding: 10px;
+  }
+  
+  .text-container {
+    max-width: 95%;
+    line-height: 1.3;
+    padding: 15px;
+    overflow: hidden;
+    transition: opacity 1s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
   header {
-    padding: 12px 15px;
-    flex-direction: column;
-    align-items: flex-start;
+    padding: 8px 15px;
   }
   
   nav ul {
-    margin-top: 10px;
-    justify-content: flex-start;
+    margin-top: 5px;
+    justify-content: flex-end;
   }
   
-  /* BANNER */
   .banner {
-    padding: 30px 20px;
+    padding: 40px 20px;
   }
   
   .banner-content {
-    max-width: 100%;
+    width: 100%;
   }
   
   /* MUSIC SECTION */

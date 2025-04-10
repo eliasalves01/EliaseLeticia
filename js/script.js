@@ -688,48 +688,103 @@ function iniciar() {
   showNextText();
 }
 
+// Função para gerenciar a exibição e a transição de textos
 function showNextText() {
   // Verifica se já mostrou todos os textos
   if (current >= texts.length) {
-    introEl.style.display = "none";
-    musicSection.classList.remove("active");
-    
-    header.style.display = "flex";
-    main.style.display = "block";
-    
-    setTimeout(() => {
-      header.classList.add("show");
-      main.classList.add("show");
-      setupVideo();
-      
-      // Permite rolagem na seção final
-      document.body.classList.remove('no-scroll');
-    }, 100);
+    // Finaliza a introdução e mostra a seção principal
+    fadeOutIntro();
     return;
   }
 
-  // Mostra o texto atual
-  textEl.textContent = texts[current];
-  textEl.classList.add("visible");
-
-  // Se for o texto 3 (índice 3), mostra a seção de música
-  if (current === 3) {
-    setTimeout(() => {
-      textEl.classList.remove("visible");
-      introEl.style.display = "none";
-      musicSection.classList.add("active");
-      gerarEstrelas(musicSection); // Gera estrelas na seção de música
-      isMusicSectionActive = true;
-    }, 3500);
-    return;
-  }
-
-  // Transição normal entre textos
+  // Adiciona um pequeno atraso antes de mostrar o texto para garantir que a animação ocorra corretamente
   setTimeout(() => {
-    textEl.classList.remove("visible");
-    current++;
-    setTimeout(showNextText, 1000);
-  }, 3500);
+    // Obtém o texto atual
+    let currentText = texts[current];
+    
+    // Verifica se está em um dispositivo móvel
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    
+    // Prepara o elemento de texto com altura adequada para evitar saltos
+    prepareTextElement(currentText);
+    
+    // Mostra o texto atual com animação de fade-in
+    textEl.textContent = currentText;
+    textEl.classList.add("visible");
+    
+    // Se for o texto que marca a transição para a seção de música
+    if (current === 3) {
+      // Programa a transição para a seção de música após o tempo de leitura
+      setTimeout(() => {
+        // Fade-out do texto atual
+        textEl.classList.remove("visible");
+        
+        // Aguarda o fade-out terminar e então mostra a seção de música
+        setTimeout(() => {
+          introEl.style.display = "none";
+          musicSection.classList.add("active");
+          gerarEstrelas(musicSection);
+          isMusicSectionActive = true;
+          
+          // Redefine altura mínima para evitar espaços em branco
+          textEl.style.minHeight = "auto";
+        }, 500);
+      }, isMobile ? 4000 : 3500); // Tempo extra para leitura em dispositivos móveis
+      return;
+    }
+    
+    // Transição normal entre textos
+    setTimeout(() => {
+      // Fade-out do texto atual
+      textEl.classList.remove("visible");
+      
+      // Avança para o próximo texto
+      current++;
+      
+      // Espera o fade-out terminar antes de mostrar o próximo texto
+      setTimeout(showNextText, 800);
+    }, isMobile ? 4000 : 3500); // Tempo extra para leitura em dispositivos móveis
+  }, 100);
+}
+
+// Função auxiliar para preparar o elemento de texto com altura adequada
+function prepareTextElement(text) {
+  // Cria um elemento temporário para medir a altura necessária
+  const tempSpan = document.createElement('span');
+  tempSpan.style.visibility = 'hidden';
+  tempSpan.style.position = 'absolute';
+  tempSpan.style.whiteSpace = 'pre-line';
+  tempSpan.style.fontSize = window.getComputedStyle(textEl).fontSize;
+  tempSpan.style.fontFamily = window.getComputedStyle(textEl).fontFamily;
+  tempSpan.style.width = `${textEl.clientWidth || introEl.clientWidth * 0.8}px`; // Fallback para largura
+  tempSpan.style.padding = window.getComputedStyle(textEl).padding;
+  tempSpan.textContent = text;
+  document.body.appendChild(tempSpan);
+  
+  // Define altura mínima com base no conteúdo + margem de segurança
+  const neededHeight = tempSpan.offsetHeight + 20;
+  textEl.style.minHeight = `${neededHeight}px`;
+  
+  // Remove o elemento temporário
+  document.body.removeChild(tempSpan);
+}
+
+// Função para finalizar a introdução e mostrar a seção principal
+function fadeOutIntro() {
+  introEl.style.display = "none";
+  musicSection.classList.remove("active");
+  
+  header.style.display = "flex";
+  main.style.display = "block";
+  
+  setTimeout(() => {
+    header.classList.add("show");
+    main.classList.add("show");
+    setupVideo();
+    
+    // Permite rolagem na seção final
+    document.body.classList.remove('no-scroll');
+  }, 100);
 }
 
 function continueAfterMusic() {
