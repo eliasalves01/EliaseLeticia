@@ -782,14 +782,47 @@ function showNextText() {
   
   // Transição de música com base no índice atual
   if (current === 7) {
-    // Mudar para a música "I Wanna Be Yours" (índice 1 da playlist)
-    fadeToSong(2);
+    // Mudar para a música "I Wanna Be Yours" (índice 2 da playlist)
+    console.log("Transitando para música 'I Wanna Be Yours' (índice 7)");
+    try {
+      fadeToSong(2); // Arctic Monkeys - I Wanna Be Yours
+    } catch (error) {
+      console.error("Erro ao mudar para a música 2:", error);
+      // Fallback: tentar alterar a música diretamente
+      if (audio) {
+        currentBgMusicIndex = 2;
+        audio.src = bgMusicPlaylist[2].src;
+        audio.play().catch(e => console.error("Erro no fallback de música:", e));
+      }
+    }
   } else if (current === 8) {
     // Mudar para a música "Monde Nouveau" (índice 0 da playlist)
-    fadeToSong(1);
+    console.log("Transitando para música 'Monde Nouveau' (índice 8)");
+    try {
+      fadeToSong(0); // Oscar Anton - Monde Nouveau
+    } catch (error) {
+      console.error("Erro ao mudar para a música 0:", error);
+      // Fallback: tentar alterar a música diretamente
+      if (audio) {
+        currentBgMusicIndex = 0;
+        audio.src = bgMusicPlaylist[0].src;
+        audio.play().catch(e => console.error("Erro no fallback de música:", e));
+      }
+    }
   } else if (current === 9) {
     // Voltar para a música padrão (índice 0 da playlist)
-    fadeToSong(1);
+    console.log("Voltando para música padrão (índice 9)");
+    try {
+      fadeToSong(0); // Oscar Anton - Monde Nouveau
+    } catch (error) {
+      console.error("Erro ao voltar para a música padrão:", error);
+      // Fallback: tentar alterar a música diretamente
+      if (audio) {
+        currentBgMusicIndex = 0;
+        audio.src = bgMusicPlaylist[0].src;
+        audio.play().catch(e => console.error("Erro no fallback de música:", e));
+      }
+    }
   }
   
   // Reset do texto para garantir animação limpa
@@ -1796,13 +1829,106 @@ function hideFloatingMusicPlayer() {
   }
 }
 
-// Função para fazer transição suave entre músicas
-function fadeToSong(songIndex) {
+// Função auxiliar para inicializar o elemento de áudio, garantindo que ele esteja pronto
+function ensureAudioIsReady() {
   if (!audio) {
     audio = document.getElementById("bg-music");
-    if (!audio) return;
   }
   
+  if (!audio) {
+    console.error("Elemento de áudio não encontrado");
+    return false;
+  }
+  
+  // Garantir que o elemento tenha fonte e esteja carregado
+  if (!audio.src || audio.src === '') {
+    audio.src = bgMusicPlaylist[currentBgMusicIndex].src;
+    audio.load();
+  }
+  
+  return true;
+}
+
+// Função para fazer transição suave entre músicas
+function fadeToSong(songIndex) {
+  // Verificar e inicializar o elemento de áudio
+  if (!ensureAudioIsReady()) {
+    console.error("Não foi possível inicializar o elemento de áudio");
+    return;
+  }
+  
+  // Detectar se é dispositivo móvel
+  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+  
+  // Verificar se a música solicitada existe
+  if (songIndex < 0 || songIndex >= bgMusicPlaylist.length) {
+    console.error(`Índice de música inválido: ${songIndex}`);
+    return;
+  }
+  
+  // Em dispositivos móveis, especialmente iOS, as transições suaves podem não funcionar bem
+  // Então usamos uma abordagem mais direta
+  if (isMobile) {
+    console.log(`Transição para música ${songIndex} em dispositivo móvel`);
+    
+    // Em iOS não manipulamos volume programaticamente
+    if (!isIOS) {
+      // Reduzir volume rapidamente (dispositivos Android)
+      audio.volume = 0.1;
+    }
+    
+    // Mudar música
+    currentBgMusicIndex = songIndex;
+    audio.src = bgMusicPlaylist[currentBgMusicIndex].src;
+    
+    // Carregar e tocar a música
+    audio.load();
+    
+    // Para a música 2, definir tempo inicial após carregar
+    if (songIndex === 2) {
+      // Em dispositivos móveis, é mais confiável definir currentTime após um play()
+      const playPromise = audio.play();
+      
+      if (playPromise !== undefined) {
+        playPromise.then(() => {
+          // Só podemos definir currentTime após um play bem-sucedido em mobile
+          setTimeout(() => {
+            audio.currentTime = 16;
+            console.log("Música 2 iniciada em 16s (dispositivo móvel)");
+            
+            // Restaurar volume (apenas Android)
+            if (!isIOS) {
+              audio.volume = 1.0;
+            }
+          }, 100);
+        }).catch(error => {
+          console.error("Erro ao iniciar reprodução em mobile:", error);
+          // Tentar novamente sem definir o tempo
+          audio.play().catch(e => console.error("Segundo erro ao reproduzir:", e));
+        });
+      }
+    } else {
+      // Para outras músicas, apenas reproduzir
+      audio.play().then(() => {
+        if (!isIOS) {
+          // Restaurar volume gradualmente (Android)
+          setTimeout(() => {
+            audio.volume = 1.0;
+          }, 500);
+        }
+      }).catch(error => {
+        console.error("Erro ao iniciar reprodução em mobile:", error);
+      });
+    }
+    
+    // Atualizar a interface do player
+    updateFloatingMusicPlayer();
+    
+    return; // Encerrar a função para dispositivos móveis
+  }
+  
+  // Código para desktop (transição suave)
   const currentVolume = audio.volume;
   const fadeOutDuration = 1000; // 1 segundo para fade out
   const fadeInDuration = 1000; // 1 segundo para fade in
@@ -1824,6 +1950,7 @@ function fadeToSong(songIndex) {
       if (songIndex === 2) {
         audio.addEventListener('loadedmetadata', function startFromMiddle() {
           audio.currentTime = 16; // Começar a partir de 16 segundos
+          console.log("Música 2 iniciada em 16s (desktop)");
           audio.removeEventListener('loadedmetadata', startFromMiddle);
         });
       }
