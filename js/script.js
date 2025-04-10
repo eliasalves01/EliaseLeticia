@@ -879,7 +879,7 @@ function continueAfterMusic() {
     }
     
     // Definir o próximo texto para exibir
-    current = 5; // Começar do 6º texto (índice 5) após a seção de música
+    current = 4; // Começar do 6º texto (índice 5) após a seção de música
     console.log(`Voltando à sequência de textos a partir do índice ${current}`);
     
     // Permitir que a interface seja redesenhada antes de animar o texto
