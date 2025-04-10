@@ -25,12 +25,11 @@ let galleryIndex = 0;
 
 // Textos para a introdução
 const texts = [
-  "No instante em que nossos olhos se encontraram pela primeira vez...",
+  "1No instante em que nossos olhos se encontraram pela primeira vez...",
   "Eu senti que o universo conspirava para nos unir",
   "Seu sorriso iluminou meu mundo de uma forma que nunca imaginei possível",
   "E desde então, cada dia ao seu lado tem sido uma bênção",
   calcularTempoRelacionamento(), // Texto dinâmico com o tempo juntos
-  // Seção de música aparece aqui
   "Essas músicas são a trilha sonora da nossa história",
   "Cada melodia guarda um pedaço do nosso amor",
   "Lembra quando ouvimos 'I Wanna Be Yours' pela primeira vez juntos?",
@@ -44,16 +43,25 @@ const texts = [
 ];
 
 // Elementos DOM
-const textEl = document.getElementById("text");
-const introEl = document.getElementById("intro");
-const startScreen = document.getElementById("start-screen");
-const musicSection = document.getElementById("music-section");
-const header = document.querySelector("header");
-const main = document.querySelector("main");
-const audio = document.getElementById("bg-music");
+let textEl;
+let introEl;
+let startScreen;
+let musicSection;
+let header;
+let main;
+let audio;
 
 // Inicialização quando o DOM estiver pronto
 document.addEventListener('DOMContentLoaded', function() {
+  // Inicializar as referências DOM
+  textEl = document.getElementById("text");
+  introEl = document.getElementById("intro");
+  startScreen = document.getElementById("start-screen");
+  musicSection = document.getElementById("music-section");
+  header = document.querySelector("header");
+  main = document.querySelector("main");
+  audio = document.getElementById("bg-music");
+  
   setupVoiceRecognition();
   setupVideoModal();
   setupMusicPlayers();
@@ -690,61 +698,92 @@ function iniciar() {
 
 // Função para gerenciar a exibição e a transição de textos
 function showNextText() {
+  // Verificar se os elementos estão disponíveis
+  if (!textEl || !introEl) {
+    console.error("Elementos de texto não encontrados, tentando novamente em 500ms");
+    setTimeout(showNextText, 500);
+    return;
+  }
+
   // Verifica se já mostrou todos os textos
   if (current >= texts.length) {
-    // Finaliza a introdução e mostra a seção principal
+    console.log("Todos os textos foram exibidos, finalizando introdução");
     fadeOutIntro();
     return;
   }
 
+  console.log(`Preparando texto ${current+1}/${texts.length}`);
+  
+  // Reset do texto para garantir animação limpa
+  textEl.classList.remove("visible");
+  
   // Adiciona um pequeno atraso antes de mostrar o texto para garantir que a animação ocorra corretamente
   setTimeout(() => {
-    // Obtém o texto atual
-    let currentText = texts[current];
-    
-    // Verifica se está em um dispositivo móvel
-    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-    
-    // Prepara o elemento de texto com altura adequada para evitar saltos
-    prepareTextElement(currentText);
-    
-    // Mostra o texto atual com animação de fade-in
-    textEl.textContent = currentText;
-    textEl.classList.add("visible");
-    
-    // Se for o texto que marca a transição para a seção de música
-    if (current === 3) {
-      // Programa a transição para a seção de música após o tempo de leitura
+    try {
+      // Obtém o texto atual
+      let currentText = texts[current];
+      
+      if (!currentText) {
+        console.error(`Texto ${current} não encontrado!`);
+        current++;
+        setTimeout(showNextText, 800);
+        return;
+      }
+      
+      // Debug: verificar qual texto está sendo exibido
+      console.log(`Exibindo texto ${current+1}/${texts.length}: ${currentText.substring(0, 30)}...`);
+      
+      // Verifica se está em um dispositivo móvel
+      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+      
+      // Prepara o elemento de texto com altura adequada para evitar saltos
+      prepareTextElement(currentText);
+      
+      // Mostra o texto atual com animação de fade-in
+      textEl.textContent = currentText;
+      textEl.classList.add("visible");
+      
+      // Se for o texto específico para exibir a seção de música (índice 3)
+      if (current === 3) {
+        console.log("Preparando transição para seção de música");
+        // Programa a transição para a seção de música após o tempo de leitura
+        setTimeout(() => {
+          // Fade-out do texto atual
+          textEl.classList.remove("visible");
+          
+          // Aguarda o fade-out terminar e então mostra a seção de música
+          setTimeout(() => {
+            introEl.style.display = "none";
+            musicSection.classList.add("active");
+            gerarEstrelas(musicSection);
+            isMusicSectionActive = true;
+            
+            // Redefine altura mínima para evitar espaços em branco
+            textEl.style.minHeight = "auto";
+          }, 500);
+        }, isMobile ? 4000 : 3500); // Tempo extra para leitura em dispositivos móveis
+        return;
+      }
+      
+      // Transição normal entre textos
       setTimeout(() => {
         // Fade-out do texto atual
         textEl.classList.remove("visible");
         
-        // Aguarda o fade-out terminar e então mostra a seção de música
-        setTimeout(() => {
-          introEl.style.display = "none";
-          musicSection.classList.add("active");
-          gerarEstrelas(musicSection);
-          isMusicSectionActive = true;
-          
-          // Redefine altura mínima para evitar espaços em branco
-          textEl.style.minHeight = "auto";
-        }, 500);
-      }, isMobile ? 4000 : 3500); // Tempo extra para leitura em dispositivos móveis
-      return;
+        // Avança para o próximo texto
+        current++;
+        
+        // Espera o fade-out terminar antes de mostrar o próximo texto
+        setTimeout(showNextText, 800);
+      }, isMobile ? 4500 : 4000); // Tempo extra para leitura
+    } catch (error) {
+      console.error("Erro ao exibir texto:", error);
+      setTimeout(() => {
+        current++;
+        showNextText();
+      }, 1000);
     }
-    
-    // Transição normal entre textos
-    setTimeout(() => {
-      // Fade-out do texto atual
-      textEl.classList.remove("visible");
-      
-      // Avança para o próximo texto
-      current++;
-      
-      // Espera o fade-out terminar antes de mostrar o próximo texto
-      setTimeout(showNextText, 800);
-    }, isMobile ? 4000 : 3500); // Tempo extra para leitura em dispositivos móveis
-  }, 100);
+  }, 400); // Aumento do tempo de espera entre textos para garantir a transição
 }
 
 // Função auxiliar para preparar o elemento de texto com altura adequada
@@ -790,6 +829,8 @@ function fadeOutIntro() {
 function continueAfterMusic() {
   if (!isMusicSectionActive || currentCard !== totalCards - 1) return;
   
+  console.log("Continuando após a seção de música...");
+  
   bgMusicCurrentTime = audio.currentTime;
   
   // Pausa todos os players de música
@@ -806,24 +847,46 @@ function continueAfterMusic() {
   });
   
   musicSection.classList.add('fade-out');
+  
+  // Garantir que todas as variáveis necessárias estão disponíveis
+  if (!textEl || !introEl || !audio) {
+    console.error("Elementos necessários não encontrados para continuar após música");
+    // Tentar recurar os elementos se não estiverem disponíveis
+    textEl = document.getElementById("text");
+    introEl = document.getElementById("intro");
+    audio = document.getElementById("bg-music");
+    
+    if (!textEl || !introEl || !audio) {
+      console.error("Não foi possível recuperar elementos, tentando finalizar introdução");
+      setTimeout(fadeOutIntro, 1000);
+      return;
+    }
+  }
+  
   setTimeout(() => {
     musicSection.classList.remove("active", "fade-out");
     isMusicSectionActive = false;
+    
+    // Preparar a intro para mostrar texto
     introEl.style.display = "flex";
-    current = 4; // Continua no 5º texto (índice 4)
-    audio.currentTime = bgMusicCurrentTime;
-    audio.play();
+    textEl.classList.remove("visible");
+    textEl.style.minHeight = "auto";
     
-    // Mostra o texto imediatamente
-    textEl.textContent = texts[current];
-    textEl.classList.add("visible");
+    // Reiniciar música
+    if (audio) {
+      audio.currentTime = bgMusicCurrentTime || 0;
+      audio.play().catch(err => console.log("Erro ao iniciar música:", err));
+    }
     
-    // Configura o timeout para o próximo texto
+    // Definir o próximo texto para exibir
+    current = 5; // Começar do 6º texto (índice 5) após a seção de música
+    console.log(`Voltando à sequência de textos a partir do índice ${current}`);
+    
+    // Permitir que a interface seja redesenhada antes de animar o texto
     setTimeout(() => {
-      textEl.classList.remove("visible");
-      current++;
-      setTimeout(showNextText, 1000);
-    }, 3500);
+      // Usar a função principal de exibição para garantir que todos os textos sejam exibidos
+      showNextText();
+    }, 500);
   }, 1000);
 }
 
