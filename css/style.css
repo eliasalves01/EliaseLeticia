@@ -108,6 +108,11 @@ body {
   overflow-wrap: break-word;
   height: auto;
   min-height: fit-content;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80%;
 }
 
 .visible {
@@ -224,10 +229,24 @@ main.show {
 }
 
 .tagline {
-  font-size: var(--font-size-md);
-  margin: 10px 0;
   font-style: italic;
+  font-size: var(--font-size-sm);
+  margin-bottom: 25px;
+  max-width: 600px;
   opacity: 0.9;
+}
+
+.days-together {
+  font-size: var(--font-size-sm);
+  margin-bottom: 10px;
+  color: #ffffff;
+  font-weight: 500;
+}
+
+#days-counter {
+  font-weight: bold;
+  color: #ffffff;
+  animation: pulse 2s infinite;
 }
 
 .buttons {
@@ -236,6 +255,82 @@ main.show {
   margin-top: 20px;
   align-items: center;
   flex-wrap: wrap;
+}
+
+/* YouTube-style badges */
+.youtube-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.yt-badge {
+  display: flex;
+  align-items: center;
+  border-radius: 3px;
+  padding: 2px 8px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+.badge-subscription {
+  background-color: #cc0000;
+  color: white;
+}
+
+.badge-title {
+  background-color: #2d2d2d;
+  color: white;
+}
+
+.badge-ranking {
+  background-color: #e53935;
+  color: white;
+  position: relative;
+  padding-left: 30px;
+}
+
+.badge-icon {
+  font-size: 14px;
+  font-weight: bold;
+  margin-right: 5px;
+}
+
+.ranking-number {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  background-color: #b71c1c;
+  width: 25px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-top-left-radius: 3px;
+  border-bottom-left-radius: 3px;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.badge-text {
+  font-size: 11px;
+  letter-spacing: 0.2px;
+  font-weight: 600;
+}
+
+@media (max-width: 576px) {
+  .youtube-badges {
+    gap: 5px;
+  }
+  
+  .yt-badge {
+    padding: 3px 6px;
+    font-size: 10px;
+  }
 }
 
 .btn-play, .btn-list, .btn-voice {
@@ -930,44 +1025,32 @@ main.show {
 
 @media (max-width: 768px) {
   :root {
-    --font-size-xl: 2.8rem;
+    --font-size-xl: 3rem;
     --font-size-lg: 1.8rem;
     --font-size-md: 1.2rem;
-    --font-size-sm: 0.9rem;
+    --font-size-sm: 0.95rem;
     --font-size-xs: 0.8rem;
   }
   
-  /* Correções para a introdução em dispositivos móveis */
-  .intro {
-    padding: 10px;
-  }
-  
-  .text-container {
-    max-width: 95%;
-    line-height: 1.3;
-    padding: 15px;
-    overflow: hidden;
-    transition: opacity 1s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  
+  /* HEADER */
   header {
-    padding: 8px 15px;
+    padding: 12px 15px;
+    flex-direction: column;
+    align-items: flex-start;
   }
   
   nav ul {
-    margin-top: 5px;
-    justify-content: flex-end;
+    margin-top: 10px;
+    justify-content: flex-start;
   }
   
+  /* BANNER */
   .banner {
-    padding: 40px 20px;
+    padding: 30px 20px;
   }
   
   .banner-content {
-    width: 100%;
+    max-width: 100%;
   }
   
   /* MUSIC SECTION */
@@ -1375,34 +1458,4 @@ main.show {
   right: 30px;
   top: 50%;
   transform: translateY(-50%);
-}
-
-/* ===== SPOTIFY PLAYLIST ===== */
-.spotify-playlist {
-  padding: 50px;
-  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.8));
-}
-
-.spotify-playlist h2 {
-  font-size: var(--font-size-lg);
-  margin-bottom: 20px;
-  color: white;
-  font-weight: 600;
-  text-align: center;
-}
-
-.playlist-container {
-  max-width: 900px;
-  margin: 0 auto;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-}
-
-@media (max-width: 768px) {
-  .spotify-playlist {
-    padding: 30px 15px;
-  }
-  
-  .spotify-playlist h2 {
-    font-size: 1.6rem;
-  }
 }

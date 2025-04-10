@@ -13,6 +13,35 @@ const swipeInstruction = document.querySelector('.swipe-instruction');
 let introFinished = false; // Flag para controlar se a introdução já foi finalizada
 let textTransitionInProgress = false; // Flag para controlar a transição entre textos
 
+// Playlist para música de fundo com metadados
+const bgMusicPlaylist = [
+  {
+    src: "assets/musica.mp3", 
+    title: "Monde Nouveau",
+    artist: "Oscar Anton",
+    cover: "assets/CapadeMusica1.jpg"
+  },
+  {
+    src: "assets/musica01.mp3", 
+    title: "Monde Nouveau",
+    artist: "Oscar Anton",
+    cover: "assets/CapadeMusica1.jpg"
+  },
+  {
+    src: "assets/musica2.mp3", 
+    title: "I Wanna Be Yours",
+    artist: "Arctic Monkeys",
+    cover: "assets/CapadeMusica2.jpeg"
+  },
+  {
+    src: "assets/musica3.mp3", 
+    title: "Compass",
+    artist: "The Neighbourhood",
+    cover: "assets/CapadeMusica3.jpeg"
+  }
+];
+let currentBgMusicIndex = 0;
+
 // Variáveis para o modal de mídia
 let currentMediaIndex = 0;
 const galleryMedia = [
@@ -27,21 +56,40 @@ let galleryIndex = 0;
 
 // Textos para a introdução
 const texts = [
-  "No instante em que nossos olhos se encontraram pela primeira vez...",
-  "Eu senti que o universo conspirava para nos unir",
-  "Seu sorriso iluminou meu mundo de uma forma que nunca imaginei possível",
-  "E desde então, cada dia ao seu lado tem sido uma bênção",
-  calcularTempoRelacionamento(), // Texto dinâmico com o tempo juntos
-  "Essas músicas são a trilha sonora da nossa história",
-  "Cada melodia guarda um pedaço do nosso amor",
-  "Lembra quando ouvimos 'I Wanna Be Yours' pela primeira vez juntos?",
-  "Ou quando 'Monde Nouveau' tocou e você disse que era nossa música?",
-  "São nessas pequenas lembranças que nosso amor se fortalece",
-  "E mesmo quando as notas terminam, nosso amor continua ecoando",
-  "Você é a melodia que embala meus dias e acalenta minhas noites",
-  "Prometo ser o refrão que sempre se repete no seu coração",
-  "Nosso amor é como uma música perfeita - sem fim, apenas harmonia",
-  "Te amo mais que todas as estrelas no céu e todas as notas já cantadas"
+  "No instante em que nossos olhos se encontraram pela primeira vez...",  // 0
+  "Eu senti que o universo conspirava para nos unir", // 1
+  "Seu sorriso iluminou meu mundo de uma forma que nunca imaginei possível", // 2
+  "E desde então, cada dia ao seu lado tem sido uma bênção", // 3
+  calcularTempoRelacionamento(), // Texto dinâmico com o tempo juntos 4
+  "Essas músicas são a trilha sonora da nossa história", // 5
+  "Cada melodia guarda um pedaço do nosso amor", // 6
+  "Lembra quando ouvimos 'I Wanna Be Yours' pela primeira vez juntos?", // 7
+  "Ou quando 'Monde Nouveau' tocou e você disse que era nossa música?", // 8
+  "São nessas pequenas lembranças que nosso amor se fortalece", // 9
+  "E mesmo quando as notas terminam, nosso amor continua ecoando", // 10
+  "Você é a melodia que embala meus dias e acalenta minhas noites", // 11 
+  "Prometo ser o refrão que sempre se repete no seu coração", // 12
+  "Nosso amor é como uma música perfeita - sem fim, apenas harmonia", // 13
+  "Te amo mais que todas as estrelas no céu e todas as notas já cantadas" // 14
+];
+
+// Definir tempos de exibição personalizados para cada texto (em milissegundos)
+const textDurations = [
+  5500,  // Texto 0: "No instante em que nossos olhos se encontraram..."
+  5500,  // Texto 1: "Eu senti que o universo conspirava para nos unir"
+  6000,  // Texto 2: "Seu sorriso iluminou meu mundo..."
+  6000,  // Texto 3: "E desde então, cada dia ao seu lado tem sido uma bênção"
+  8000,  // Texto 4: calcularTempoRelacionamento() - Precisa de mais tempo pois é dinâmico
+  6000,  // Texto 5: "Essas músicas são a trilha sonora da nossa história"
+  6000,  // Texto 6: "Cada melodia guarda um pedaço do nosso amor"
+  15000,  // Texto 7: "Lembra quando ouvimos 'I Wanna Be Yours'..."
+  10000,  // Texto 8: "Ou quando 'Monde Nouveau' tocou..."
+  6500,  // Texto 9: "São nessas pequenas lembranças que nosso amor se fortalece"
+  6500,  // Texto 10: "E mesmo quando as notas terminam, nosso amor continua ecoando"
+  6500,  // Texto 11: "Você é a melodia que embala meus dias e acalenta minhas noites"
+  6500,  // Texto 12: "Prometo ser o refrão que sempre se repete no seu coração"
+  7000,  // Texto 13: "Nosso amor é como uma música perfeita - sem fim, apenas harmonia"
+  9000   // Texto 14: "Te amo mais que todas as estrelas no céu e todas as notas já cantadas"
 ];
 
 // Elementos DOM
@@ -71,6 +119,7 @@ document.addEventListener('DOMContentLoaded', function() {
   setupMediaModal();
   setupGalleryCarousel();
   setupVideoPreview();
+  setupBgMusicPlaylist(); // Configurar a playlist de música de fundo
   
   // Tenta autoplay após interação do usuário
   document.body.addEventListener('click', function initialPlay() {
@@ -693,7 +742,13 @@ function setupVideoModal() {
 function iniciar() {
   startScreen.style.display = "none";
   introEl.style.display = "flex";
-  audio.play();
+  
+  // Garantir que estamos usando a música correta da playlist
+  if (audio) {
+    audio.src = bgMusicPlaylist[currentBgMusicIndex].src;
+    audio.play();
+  }
+  
   gerarEstrelas(introEl);
   showNextText();
 }
@@ -725,8 +780,25 @@ function showNextText() {
 
   console.log(`Preparando texto ${current+1}/${texts.length} (índice: ${current})`);
   
+  // Transição de música com base no índice atual
+  if (current === 7) {
+    // Mudar para a música "I Wanna Be Yours" (índice 1 da playlist)
+    fadeToSong(2);
+  } else if (current === 8) {
+    // Mudar para a música "Monde Nouveau" (índice 0 da playlist)
+    fadeToSong(1);
+  } else if (current === 9) {
+    // Voltar para a música padrão (índice 0 da playlist)
+    fadeToSong(1);
+  }
+  
   // Reset do texto para garantir animação limpa
   textEl.classList.remove("visible");
+  
+  // Garantir que o elemento intro esteja visível e com display flex
+  introEl.style.display = "flex";
+  introEl.style.alignItems = "center";
+  introEl.style.justifyContent = "center";
   
   // Adiciona um pequeno atraso antes de mostrar o texto para garantir que a animação ocorra corretamente
   setTimeout(() => {
@@ -781,7 +853,9 @@ function showNextText() {
       }
       
       // Transição normal entre textos - usando uma abordagem de promessa para evitar chamadas paralelas
-      let timeoutDuration = isMobile ? 4000 : 3500;
+      let timeoutDuration = isMobile ? 
+        (textDurations[current] * 1.2) : // Mais tempo em dispositivos móveis (20% a mais)
+        textDurations[current] || 6000;  // Fallback para 6 segundos se não estiver definido
       
       // Exibir o texto atual por um tempo antes de avançar para o próximo
       setTimeout(() => {
@@ -809,7 +883,7 @@ function showNextText() {
           
           // Chamar diretamente a próxima exibição como uma função separada
           showNextTextWithDelay();
-        }, 800);
+        }, 1000);
       }, timeoutDuration);
       
     } catch (error) {
@@ -819,7 +893,7 @@ function showNextText() {
       // Tenta recuperar sem avançar muito
       setTimeout(() => {
         fadeOutIntro();
-      }, 1000);
+      }, 5000);
     }
   }, 400); // Aumento do tempo de espera entre textos para garantir a transição
 }
@@ -883,6 +957,9 @@ function fadeOutIntro() {
       if (header) header.classList.add("show");
       if (main) main.classList.add("show");
       setupVideo();
+      
+      // Garantir que o amostrador de música esteja visível na tela principal
+      showFloatingMusicPlayer();
       
       // Permite rolagem na seção final
       document.body.classList.remove('no-scroll');
@@ -1443,4 +1520,340 @@ function setupVideoPreview() {
       item.setAttribute('data-check-interval', checkTimeInterval);
     });
   });
+}
+
+// Função para configurar a reprodução automática da playlist
+function setupBgMusicPlaylist() {
+  if (!audio) {
+    audio = document.getElementById("bg-music");
+  }
+  
+  if (!audio) {
+    console.error("Elemento de áudio de fundo não encontrado");
+    return;
+  }
+  
+  // Inicializar o amostrador de música flutuante
+  setupFloatingMusicPlayer();
+  
+  // Definir a música inicial
+  audio.src = bgMusicPlaylist[currentBgMusicIndex].src;
+  
+  // Adicionar evento para atualizar o progresso da música
+  audio.addEventListener('timeupdate', function() {
+    updateMusicProgress();
+  });
+  
+  // Adicionar evento para quando a música terminar
+  audio.addEventListener('ended', function() {
+    // Avançar para a próxima música na playlist
+    currentBgMusicIndex = (currentBgMusicIndex + 1) % bgMusicPlaylist.length;
+    
+    // Definir a próxima música como fonte
+    audio.src = bgMusicPlaylist[currentBgMusicIndex].src;
+    
+    // Iniciar a reprodução da próxima música
+    audio.play().catch(error => {
+      console.error("Erro ao reproduzir próxima música:", error);
+    });
+    
+    // Atualizar o amostrador flutuante
+    updateFloatingMusicPlayer();
+    
+    console.log(`Tocando próxima música: ${bgMusicPlaylist[currentBgMusicIndex].title}`);
+  });
+  
+  // Lidar com erros de reprodução
+  audio.addEventListener('error', function(e) {
+    console.error("Erro ao carregar música:", e);
+    
+    // Tentar a próxima música em caso de erro
+    currentBgMusicIndex = (currentBgMusicIndex + 1) % bgMusicPlaylist.length;
+    audio.src = bgMusicPlaylist[currentBgMusicIndex].src;
+    audio.play().catch(error => {
+      console.error("Erro ao reproduzir música após falha:", error);
+    });
+  });
+}
+
+function updateDaysCounter() {
+  const daysCounter = document.getElementById('days-counter');
+  if (daysCounter) {
+    // Extrair apenas o número de dias
+    const dataInicio = new Date(2025, 1, 21); // 21/02/2025
+    const dataAtual = new Date();
+    
+    if (dataAtual < dataInicio) {
+      daysCounter.textContent = '0';
+    } else {
+      const diffMs = dataAtual - dataInicio;
+      const diasTotais = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+      daysCounter.textContent = diasTotais;
+    }
+  }
+}
+
+// Configuração e gerenciamento do amostrador de música flutuante
+function setupFloatingMusicPlayer() {
+  const floatingPlayer = document.getElementById('music-floating-player');
+  const playPauseBtn = document.getElementById('play-pause');
+  const prevBtn = document.getElementById('prev-track');
+  const nextBtn = document.getElementById('next-track');
+  
+  if (!floatingPlayer) {
+    console.error("Elemento do amostrador de música não encontrado");
+    return;
+  }
+  
+  // Inicializar com as informações da música atual
+  updateFloatingMusicPlayer();
+  
+  // Mostrar o amostrador 3 segundos após o início da reprodução
+  setTimeout(() => {
+    showFloatingMusicPlayer();
+  }, 3000);
+  
+  // Adicionar eventos para esconder/mostrar o amostrador ao passar o mouse
+  floatingPlayer.addEventListener('mouseenter', () => {
+    floatingPlayer.classList.add('animate');
+  });
+  
+  floatingPlayer.addEventListener('mouseleave', () => {
+    floatingPlayer.classList.remove('animate');
+  });
+  
+  // Adicionar funcionalidade aos botões de controle
+  if (playPauseBtn) {
+    playPauseBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      toggleBgMusic();
+    });
+  }
+  
+  if (prevBtn) {
+    prevBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      playPreviousTrack();
+    });
+  }
+  
+  if (nextBtn) {
+    nextBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      playNextTrack();
+    });
+  }
+}
+
+// Reproduzir faixa anterior
+function playPreviousTrack() {
+  currentBgMusicIndex = (currentBgMusicIndex === 0) ? 
+    bgMusicPlaylist.length - 1 : currentBgMusicIndex - 1;
+  
+  loadAndPlayTrack(currentBgMusicIndex);
+}
+
+// Reproduzir próxima faixa
+function playNextTrack() {
+  currentBgMusicIndex = (currentBgMusicIndex + 1) % bgMusicPlaylist.length;
+  loadAndPlayTrack(currentBgMusicIndex);
+}
+
+// Carregar e reproduzir uma faixa específica
+function loadAndPlayTrack(index) {
+  if (!audio) return;
+  
+  const currentMusic = bgMusicPlaylist[index];
+  audio.src = currentMusic.src;
+  audio.load();
+  
+  // Atualizar o player flutuante
+  updateFloatingMusicPlayer();
+  
+  // Iniciar a reprodução
+  audio.play().then(() => {
+    const albumArt = document.getElementById('current-album-art');
+    if (albumArt) {
+      albumArt.classList.add('rotating');
+    }
+    
+    updatePlayPauseButton(false);
+  }).catch(error => {
+    console.error("Erro ao reproduzir áudio:", error);
+  });
+}
+
+// Alternar entre reproduzir e pausar a música
+function toggleBgMusic() {
+  if (!audio) return;
+  
+  if (audio.paused) {
+    audio.play().then(() => {
+      const albumArt = document.getElementById('current-album-art');
+      if (albumArt) {
+        albumArt.classList.add('rotating');
+      }
+      
+      updatePlayPauseButton(false);
+    }).catch(error => {
+      console.error("Erro ao reproduzir áudio:", error);
+    });
+  } else {
+    audio.pause();
+    const albumArt = document.getElementById('current-album-art');
+    if (albumArt) {
+      albumArt.classList.remove('rotating');
+    }
+    
+    updatePlayPauseButton(true);
+  }
+}
+
+// Atualizar o botão de play/pause
+function updatePlayPauseButton(isPaused) {
+  const playPauseBtn = document.getElementById('play-pause');
+  if (playPauseBtn) {
+    playPauseBtn.textContent = isPaused ? '▶' : '⏸';
+  }
+}
+
+// Função para atualizar as informações do amostrador de música
+function updateFloatingMusicPlayer() {
+  const currentMusic = bgMusicPlaylist[currentBgMusicIndex];
+  const albumArtElement = document.getElementById('current-album-art');
+  
+  if (albumArtElement) {
+    // Atualizar com animação de fade
+    albumArtElement.style.opacity = '0';
+    
+    setTimeout(() => {
+      albumArtElement.src = currentMusic.cover;
+      
+      // Atualizar a classe rotating na capa do álbum
+      if (audio && !audio.paused) {
+        albumArtElement.classList.add('rotating');
+      } else {
+        albumArtElement.classList.remove('rotating');
+      }
+      
+      albumArtElement.style.opacity = '1';
+      
+      // Animar para chamar atenção para a troca de música
+      const floatingPlayer = document.getElementById('music-floating-player');
+      if (floatingPlayer) {
+        floatingPlayer.classList.add('animate');
+        setTimeout(() => {
+          floatingPlayer.classList.remove('animate');
+        }, 4000);
+      }
+      
+      // Atualizar o botão play/pause
+      updatePlayPauseButton(audio.paused);
+    }, 300);
+  }
+}
+
+// Atualizar a barra de progresso do amostrador e o contador de tempo
+function updateMusicProgress() {
+  const progressBar = document.getElementById('mini-player-progress-bar');
+  const timeDisplay = document.getElementById('current-time');
+  
+  if (progressBar && audio) {
+    const percent = (audio.currentTime / audio.duration) * 100;
+    progressBar.style.width = `${percent}%`;
+    
+    // Atualizar o contador de tempo
+    if (timeDisplay) {
+      const currentTime = formatTime(audio.currentTime);
+      timeDisplay.textContent = currentTime;
+    }
+  }
+}
+
+// Formatar tempo em MM:SS
+function formatTime(seconds) {
+  if (isNaN(seconds)) return "0:00";
+  
+  const minutes = Math.floor(seconds / 60);
+  const remainingSeconds = Math.floor(seconds % 60);
+  
+  return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+}
+
+// Mostrar o amostrador de música
+function showFloatingMusicPlayer() {
+  const floatingPlayer = document.getElementById('music-floating-player');
+  if (floatingPlayer) {
+    floatingPlayer.classList.add('show');
+  }
+}
+
+// Esconder o amostrador de música
+function hideFloatingMusicPlayer() {
+  const floatingPlayer = document.getElementById('music-floating-player');
+  if (floatingPlayer) {
+    floatingPlayer.classList.remove('show');
+  }
+}
+
+// Função para fazer transição suave entre músicas
+function fadeToSong(songIndex) {
+  if (!audio) {
+    audio = document.getElementById("bg-music");
+    if (!audio) return;
+  }
+  
+  const currentVolume = audio.volume;
+  const fadeOutDuration = 1000; // 1 segundo para fade out
+  const fadeInDuration = 1000; // 1 segundo para fade in
+  const volumeStep = 0.05;
+  
+  // Função para reduzir o volume gradualmente
+  const fadeOut = () => {
+    if (audio.volume > volumeStep) {
+      audio.volume -= volumeStep;
+      setTimeout(fadeOut, fadeOutDuration * volumeStep);
+    } else {
+      audio.volume = 0;
+      
+      // Mudar a música
+      currentBgMusicIndex = songIndex;
+      audio.src = bgMusicPlaylist[currentBgMusicIndex].src;
+      
+      // Se for a música 2 (I Wanna Be Yours), começar a tocar a partir de 16 segundos
+      if (songIndex === 2) {
+        audio.addEventListener('loadedmetadata', function startFromMiddle() {
+          audio.currentTime = 16; // Começar a partir de 16 segundos
+          audio.removeEventListener('loadedmetadata', startFromMiddle);
+        });
+      }
+      
+      // Atualizar o player flutuante
+      updateFloatingMusicPlayer();
+      
+      // Iniciar a reprodução e fade in
+      audio.play().then(() => {
+        fadeIn();
+      }).catch(error => {
+        console.error("Erro ao reproduzir áudio após transição:", error);
+        audio.volume = currentVolume; // Restaurar volume em caso de erro
+      });
+    }
+  };
+  
+  // Função para aumentar o volume gradualmente
+  const fadeIn = () => {
+    if (audio.volume < currentVolume - volumeStep) {
+      audio.volume += volumeStep;
+      setTimeout(fadeIn, fadeInDuration * volumeStep);
+    } else {
+      audio.volume = currentVolume;
+    }
+  };
+  
+  // Se a música atual já for a solicitada, não fazer nada
+  if (currentBgMusicIndex === songIndex) return;
+  
+  // Iniciar o processo de fade out
+  fadeOut();
 }
