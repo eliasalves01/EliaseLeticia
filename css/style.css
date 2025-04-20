@@ -430,7 +430,7 @@ main.show {
 }
 
 .music-section h1.highlight {
-  font-size: var(--font-size-lg);
+  font-size: 3rem;
   font-weight: 600;
   background: linear-gradient(45deg, #ff6b81, #ff53da);
   -webkit-background-clip: text;
@@ -444,7 +444,7 @@ main.show {
   font-family: 'Poppins', sans-serif;
   font-weight: 300;
   max-width: 80%;
-  font-size: var(--font-size-sm);
+  font-size: 1.4rem;
   color: #e0e0e0;
   margin-bottom: 2rem;
 }
@@ -1011,7 +1011,7 @@ main.show {
     --font-size-xl: 3.5rem;
     --font-size-lg: 2rem;
     --font-size-md: 1.3rem;
-    --font-size-sm: 1rem;
+    --font-size-sm: 1.4rem;
   }
   
   .banner {
