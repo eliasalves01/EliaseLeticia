@@ -316,7 +316,7 @@ function prevenirRolagem() {
 
 // Função para calcular tempo de relacionamento
 function calcularTempoRelacionamento() {
-  const dataInicio = new Date(2025, 2, 21); // 21/02/2025
+  const dataInicio = new Date(2023, 1, 21); // 21/02/2023
   const dataAtual = new Date();
   
   if (dataAtual < dataInicio) {
@@ -325,30 +325,69 @@ function calcularTempoRelacionamento() {
     return `Faltam ${diasFaltantes} dias para começarmos nossa jornada juntos 💕`;
   }
 
+  // Cálculo mais preciso dos meses
+  let anos = dataAtual.getFullYear() - dataInicio.getFullYear();
+  let meses = dataAtual.getMonth() - dataInicio.getMonth();
+  
+  if (meses < 0) {
+    anos--;
+    meses += 12;
+  }
+  
+  // Ajuste para o dia do mês
+  if (dataAtual.getDate() < dataInicio.getDate()) {
+    meses--;
+    if (meses < 0) {
+      anos--;
+      meses += 12;
+    }
+  }
+  
+  // Calcular dias restantes
+  const ultimoDiaMesAnterior = new Date(dataAtual.getFullYear(), dataAtual.getMonth(), 0).getDate();
+  let diasPassadosNoMesAtual = dataAtual.getDate();
+  let diasPassadosNoMesInicio = dataInicio.getDate();
+  
+  // Se o dia atual é menor que o dia de início, ajustamos o cálculo
+  let diasRestantes;
+  if (dataAtual.getDate() < dataInicio.getDate()) {
+    diasRestantes = ultimoDiaMesAnterior - diasPassadosNoMesInicio + diasPassadosNoMesAtual;
+  } else {
+    diasRestantes = diasPassadosNoMesAtual - diasPassadosNoMesInicio;
+  }
+  
+  // Calcular semanas no mês atual (simplificado para exibição)
+  const semanasNoMes = Math.floor(diasRestantes / 7);
+  diasRestantes = diasRestantes % 7;
+  
+  // Calcular horas totais para exibição
   const diffMs = dataAtual - dataInicio;
   const horasTotais = Math.floor(diffMs / (1000 * 60 * 60));
-  const diasTotais = Math.floor(horasTotais / 24);
-  const semanas = Math.floor(diasTotais / 7);
-  const meses = Math.floor(diasTotais / 30);
-  const semanasNoMes = semanas % 4;
-  const diasRestantes = diasTotais % 7;
-
- 
-  if (diasRestantes === 0) {
-    return `Estamos juntos a:
-        ${meses} ${meses === 1 ? 'mês' : 'meses'} e
-        ${semanasNoMes} ${semanasNoMes === 1 ? 'semana' : 'semanas'}
-        
-        ${horasTotais.toLocaleString()} horas de felicidade juntos 💕`;
-}
-
-return `Estamos juntos a:
-        ${meses} ${meses === 1 ? 'mês' : 'meses'},
-        ${semanasNoMes} ${semanasNoMes === 1 ? 'semana' : 'semanas'} e
-        ${diasRestantes} ${diasRestantes === 1 ? 'dia' : 'dias'}
-        
-        são ${horasTotais.toLocaleString()} horas compartilhadas ❤️`;
-
+  
+  // Montar a mensagem de saída dependendo dos valores
+  let mensagem = `Estamos juntos a: `;
+  
+  if (anos > 0) {
+    mensagem += `${anos} ${anos === 1 ? 'ano' : 'anos'}, `;
+  }
+  
+  mensagem += `${meses} ${meses === 1 ? 'mês' : 'meses'}`;
+  
+  if (semanasNoMes > 0) {
+    mensagem += ` e ${semanasNoMes} ${semanasNoMes === 1 ? 'semana' : 'semanas'}`;
+  }
+  
+  if (diasRestantes > 0) {
+    if (semanasNoMes > 0) {
+      mensagem += ` e ${diasRestantes} ${diasRestantes === 1 ? 'dia' : 'dias'}`;
+    } else {
+      mensagem += ` e ${diasRestantes} ${diasRestantes === 1 ? 'dia' : 'dias'}`;
+    }
+  }
+  
+  mensagem += `\n\nsão ${horasTotais.toLocaleString()} horas compartilhadas ❤️`;
+  
+  return mensagem;
 }
 
 // Configuração dos players de música
@@ -1613,7 +1652,7 @@ function updateDaysCounter() {
   const daysCounter = document.getElementById('days-counter');
   if (daysCounter) {
     // Extrair apenas o número de dias
-    const dataInicio = new Date(2025, 1, 21); // 21/02/2025
+    const dataInicio = new Date(2023, 1, 21); // 21/02/2023
     const dataAtual = new Date();
     
     if (dataAtual < dataInicio) {
@@ -1621,7 +1660,7 @@ function updateDaysCounter() {
     } else {
       const diffMs = dataAtual - dataInicio;
       const diasTotais = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-      daysCounter.textContent = diasTotais;
+      daysCounter.textContent = diasTotais.toLocaleString();
     }
   }
 }
