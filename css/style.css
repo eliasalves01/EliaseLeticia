@@ -430,7 +430,7 @@ main.show {
 }
 
 .music-section h1.highlight {
-  font-size: 3rem;
+  font-size: 2.4rem;
   font-weight: 600;
   background: linear-gradient(45deg, #ff6b81, #ff53da);
   -webkit-background-clip: text;
@@ -1107,7 +1107,7 @@ main.show {
   }
   
   .subtitle {
-    font-size: var(--font-size-xs);
+    font-size: 1.1rem;
   }
   
   /* GALLERY */
@@ -1125,11 +1125,11 @@ main.show {
   }
   
   .song-title {
-    font-size: 0.9rem;
+    font-size: 1.1rem;
   }
   
   .artist {
-    font-size: 0.7rem;
+    font-size: 0.9rem;
   }
 }
 
