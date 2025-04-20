@@ -75,21 +75,21 @@ const texts = [
 
 // Definir tempos de exibição personalizados para cada texto (em milissegundos)
 const textDurations = [
-  5500,  // Texto 0: "No instante em que nossos olhos se encontraram..."
-  5500,  // Texto 1: "Eu senti que o universo conspirava para nos unir"
-  6000,  // Texto 2: "Seu sorriso iluminou meu mundo..."
-  6000,  // Texto 3: "E desde então, cada dia ao seu lado tem sido uma bênção"
-  8000,  // Texto 4: calcularTempoRelacionamento() - Precisa de mais tempo pois é dinâmico
-  6000,  // Texto 5: "Essas músicas são a trilha sonora da nossa história"
-  6000,  // Texto 6: "Cada melodia guarda um pedaço do nosso amor"
+  4500,  // Texto 0: "No instante em que nossos olhos se encontraram..."
+  4500,  // Texto 1: "Eu senti que o universo conspirava para nos unir"
+  5000,  // Texto 2: "Seu sorriso iluminou meu mundo..."
+  5000,  // Texto 3: "E desde então, cada dia ao seu lado tem sido uma bênção"
+  6000,  // Texto 4: calcularTempoRelacionamento() - Precisa de mais tempo pois é dinâmico
+  5000,  // Texto 5: "Essas músicas são a trilha sonora da nossa história"
+  5000,  // Texto 6: "Cada melodia guarda um pedaço do nosso amor"
   15000,  // Texto 7: "Lembra quando ouvimos 'I Wanna Be Yours'..."
   10000,  // Texto 8: "Ou quando 'Monde Nouveau' tocou..."
-  6500,  // Texto 9: "São nessas pequenas lembranças que nosso amor se fortalece"
-  6500,  // Texto 10: "E mesmo quando as notas terminam, nosso amor continua ecoando"
-  6500,  // Texto 11: "Você é a melodia que embala meus dias e acalenta minhas noites"
-  6500,  // Texto 12: "Prometo ser o refrão que sempre se repete no seu coração"
-  7000,  // Texto 13: "Nosso amor é como uma música perfeita - sem fim, apenas harmonia"
-  9000   // Texto 14: "Te amo mais que todas as estrelas no céu e todas as notas já cantadas"
+  5500,  // Texto 9: "São nessas pequenas lembranças que nosso amor se fortalece"
+  5500,  // Texto 10: "E mesmo quando as notas terminam, nosso amor continua ecoando"
+  5500,  // Texto 11: "Você é a melodia que embala meus dias e acalenta minhas noites"
+  5500,  // Texto 12: "Prometo ser o refrão que sempre se repete no seu coração"
+  6000,  // Texto 13: "Nosso amor é como uma música perfeita - sem fim, apenas harmonia"
+  7000   // Texto 14: "Te amo mais que todas as estrelas no céu e todas as notas já cantadas"
 ];
 
 // Elementos DOM
