@@ -316,7 +316,7 @@ function prevenirRolagem() {
 
 // Função para calcular tempo de relacionamento
 function calcularTempoRelacionamento() {
-  const dataInicio = new Date(2025, 1, 21); // 21/02/2025
+  const dataInicio = new Date(2025, 2, 21); // 21/02/2025
   const dataAtual = new Date();
   
   if (dataAtual < dataInicio) {
