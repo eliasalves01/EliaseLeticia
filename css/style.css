@@ -1028,7 +1028,7 @@ main.show {
     --font-size-xl: 3rem;
     --font-size-lg: 1.8rem;
     --font-size-md: 1.2rem;
-    --font-size-sm: 0.95rem;
+    --font-size-sm: 1rem;
     --font-size-xs: 0.8rem;
   }
   
@@ -1078,7 +1078,7 @@ main.show {
     --font-size-xl: 2.5rem; 
     --font-size-lg: 1.6rem;
     --font-size-md: 1.1rem;
-    --font-size-sm: 0.9rem;
+    --font-size-sm: 1rem;
     --font-size-xs: 0.75rem;
   }
   
