@@ -63,15 +63,15 @@ let galleryIndex = 0;
 const texts = [
   "No instante em que nossos olhos se encontraram pela primeira vez...",  // 0
   "Eu senti que o universo conspirava para nos unir", // 1
-  "Seu sorriso iluminou meu mundo de uma forma que nunca imaginei possível", // 2
-  "E desde então, cada momento ao seu lado tem sido unicos ", // 3
+  "Seu sorriso ilumina meu mundo de uma forma que nunca imaginei possível", // 2
+  "E desde então, cada momento compartilhado ao seu lado é único  ", // 3
   "Essas músicas são a trilha sonora da nossa história", // 4
   "Cada melodia guarda um pedaço do nosso amor", // 5
   "Lembra quando ouvimos 'I Wanna Be Yours' pela primeira vez juntos?", // 6
-  "Como diz Compass, eu te guardo comigo, porque você é minha bússola", // 7
-  "Ou quando 'Monde Nouveau' tocou e você disse que era nossa música?", // 8
+  "Ou quando 'Monde Nouveau' tocou e você disse que era nossa música?", // 7
+  "Como diz Compass, eu te guardo comigo, porque você é minha bússola", // 8
   "São nessas pequenas lembranças que nosso amor se fortalece", // 9
-  "E mesmo quando as notas terminam, nosso amor continua ecoando", // 10
+  "E mesmo quando as notas terminam, nosso amor continua ecoando...", // 10
   "Você é a melodia que embala meus dias e acalenta minhas noites", // 11 
   "Prometo ser o refrão que sempre se repete no seu coração", // 12
   "Nosso amor é como uma música perfeita, sem fim, apenas harmonia", // 13
@@ -88,15 +88,15 @@ const textDurations = [
   5000,  // Texto 4: "Essas músicas são a trilha sonora da nossa história"
   5000,  // Texto 5: "Cada melodia guarda um pedaço do nosso amor"
   12000,  // Texto 6: "Lembra quando ouvimos 'I Wanna Be Yours'..."
-  12000,  // Texto 7: ""
-  6000,  // Texto 8: "Ou quando 'Monde Nouveau' tocou..."
+  70000,  // Texto 7: "Ou quando 'Monde Nouveau' tocou..."
+  70000,  // Texto 8: ""
   5000,  // Texto 9: "São nessas pequenas lembranças que nosso amor se fortalece"
   5000,  // Texto 10: "E mesmo quando as notas terminam, nosso amor continua ecoando"
   5000,  // Texto 11: "Você é a melodia que embala meus dias e acalenta minhas noites"
   5000,  // Texto 12: "Prometo ser o refrão que sempre se repete no seu coração"
   5000,  // Texto 13: "Nosso amor é como uma música perfeita - sem fim, apenas harmonia"
   6500,  // Texto 14: calcularTempoRelacionamento() - Precisa de mais tempo pois é dinâmico
-  5000   // Texto 15: "Te amo mais que todas as estrelas no céu e todas as notas já cantadas"
+  6000   // Texto 15: "Te amo mais que todas as estrelas no céu e todas as notas já cantadas"
 ];
 
 // Elementos DOM
@@ -981,13 +981,13 @@ function showNextText() {
     // Voltar para a música padrão (índice 0 da playlist)
     console.log("Voltando para música padrão (índice 7)");
     try {
-      fadeToSong(2); // 
+      fadeToSong(0); // 
     } catch (error) {
       console.error("Erro ao voltar para a música padrão:", error);
       // Fallback: tentar alterar a música diretamente
       if (audio) {
-        currentBgMusicIndex = 2;
-        audio.src = bgMusicPlaylist[2].src;
+        currentBgMusicIndex = 0;
+        audio.src = bgMusicPlaylist[0].src;
         audio.play().catch(e => console.error("Erro no fallback de música:", e));
       }
     }
@@ -996,13 +996,13 @@ function showNextText() {
     // Mudar para a música "Monde Nouveau" (índice 0 da playlist)
     console.log("Transitando para música 'Monde Nouveau' (índice 8)");
     try {
-      fadeToSong(0); // Oscar Anton - Monde Nouveau
+      fadeToSong(2); // Oscar Anton - Monde Nouveau
     } catch (error) {
       console.error("Erro ao mudar para a música 0:", error);
       // Fallback: tentar alterar a música diretamente
       if (audio) {
-        currentBgMusicIndex = 0;
-        audio.src = bgMusicPlaylist[0].src;
+        currentBgMusicIndex = 2;
+        audio.src = bgMusicPlaylist[2].src;
         audio.play().catch(e => console.error("Erro no fallback de música:", e));
       }
     }
