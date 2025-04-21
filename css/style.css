@@ -457,7 +457,7 @@ main.show {
 
 .music-carousel {
   width: 100%;
-  max-width: 400px;
+  max-width: 450px;
   position: relative;
   margin: 20px auto;
   height: auto;
@@ -488,7 +488,7 @@ main.show {
   padding: 20px;
   border-radius: 12px;
   width: 100%;
-  max-width: 350px;
+  max-width: 425px;
   display: flex;
   align-items: center;
   gap: 15px;

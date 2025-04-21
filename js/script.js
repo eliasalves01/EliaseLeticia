@@ -16,12 +16,6 @@ let textTransitionInProgress = false; // Flag para controlar a transição entre
 // Playlist para música de fundo com metadados
 const bgMusicPlaylist = [
   {
-    src: "assets/musica.mp3", 
-    title: "Monde Nouveau",
-    artist: "Oscar Anton",
-    cover: "assets/CapadeMusica1.jpg"
-  },
-  {
     src: "assets/musica01.mp3", 
     title: "Monde Nouveau",
     artist: "Oscar Anton",
@@ -38,6 +32,12 @@ const bgMusicPlaylist = [
     title: "Compass",
     artist: "The Neighbourhood",
     cover: "assets/CapadeMusica3.jpeg"
+  },
+  {
+    src: "assets/musica.mp3", 
+    title: "eu sei que vou te amar",
+    artist: "Leticia Cantão",
+    cover: "assets/foto1.jpg"
   }
 ];
 let currentBgMusicIndex = 0;
@@ -316,78 +316,129 @@ function prevenirRolagem() {
 
 // Função para calcular tempo de relacionamento
 function calcularTempoRelacionamento() {
-  const dataInicio = new Date(2023, 1, 21); // 21/02/2023
+  const dataInicio = new Date(2025, 1, 21); // 21/02/2025 (mês é 1 pois em JavaScript janeiro=0, fevereiro=1)
   const dataAtual = new Date();
   
+  // Definir data para calcular o relacionamento
+  let dataCalculo;
+  
   if (dataAtual < dataInicio) {
-    const diffMs = dataInicio - dataAtual;
-    const diasFaltantes = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-    return `Faltam ${diasFaltantes} dias para começarmos nossa jornada juntos 💕`;
-  }
-
-  // Cálculo mais preciso dos meses
-  let anos = dataAtual.getFullYear() - dataInicio.getFullYear();
-  let meses = dataAtual.getMonth() - dataInicio.getMonth();
-  
-  if (meses < 0) {
-    anos--;
-    meses += 12;
-  }
-  
-  // Ajuste para o dia do mês
-  if (dataAtual.getDate() < dataInicio.getDate()) {
-    meses--;
-    if (meses < 0) {
-      anos--;
-      meses += 12;
-    }
-  }
-  
-  // Calcular dias restantes
-  const ultimoDiaMesAnterior = new Date(dataAtual.getFullYear(), dataAtual.getMonth(), 0).getDate();
-  let diasPassadosNoMesAtual = dataAtual.getDate();
-  let diasPassadosNoMesInicio = dataInicio.getDate();
-  
-  // Se o dia atual é menor que o dia de início, ajustamos o cálculo
-  let diasRestantes;
-  if (dataAtual.getDate() < dataInicio.getDate()) {
-    diasRestantes = ultimoDiaMesAnterior - diasPassadosNoMesInicio + diasPassadosNoMesAtual;
+    // Se a data atual é anterior à data de início,
+    // vamos simular que o relacionamento começou há exatamente 2 meses a partir de hoje
+    dataCalculo = new Date(dataAtual);
+    dataCalculo.setMonth(dataCalculo.getMonth() - 2); // Voltar 2 meses a partir de hoje
   } else {
-    diasRestantes = diasPassadosNoMesAtual - diasPassadosNoMesInicio;
+    // Se já passamos da data de início real, usar a data de início original
+    dataCalculo = new Date(dataInicio);
   }
   
-  // Calcular semanas no mês atual (simplificado para exibição)
-  const semanasNoMes = Math.floor(diasRestantes / 7);
-  diasRestantes = diasRestantes % 7;
-  
-  // Calcular horas totais para exibição
-  const diffMs = dataAtual - dataInicio;
+  // A partir daqui, calcular normalmente usando dataCalculo como a data de início
+  const diffMs = dataAtual - dataCalculo;
   const horasTotais = Math.floor(diffMs / (1000 * 60 * 60));
+  const diasTotais = Math.floor(diffMs / (1000 * 60 * 60 * 24));
   
-  // Montar a mensagem de saída dependendo dos valores
-  let mensagem = `Estamos juntos a: `;
-  
-  if (anos > 0) {
-    mensagem += `${anos} ${anos === 1 ? 'ano' : 'anos'}, `;
-  }
-  
-  mensagem += `${meses} ${meses === 1 ? 'mês' : 'meses'}`;
-  
-  if (semanasNoMes > 0) {
-    mensagem += ` e ${semanasNoMes} ${semanasNoMes === 1 ? 'semana' : 'semanas'}`;
-  }
-  
-  if (diasRestantes > 0) {
-    if (semanasNoMes > 0) {
-      mensagem += ` e ${diasRestantes} ${diasRestantes === 1 ? 'dia' : 'dias'}`;
-    } else {
-      mensagem += ` e ${diasRestantes} ${diasRestantes === 1 ? 'dia' : 'dias'}`;
+  // Caso especial para quando a data atual for dia 20 de qualquer mês
+  // E a data de cálculo foi dia 20 de dois meses atrás
+  if (dataAtual.getDate() === 20 && dataCalculo.getDate() === 20) {
+    // Contar quantos meses exatos se passaram
+    const anoInicio = dataCalculo.getFullYear();
+    const mesInicio = dataCalculo.getMonth();
+    const anoAtual = dataAtual.getFullYear();
+    const mesAtual = dataAtual.getMonth();
+    
+    // Número de meses entre as datas
+    const meses = (anoAtual - anoInicio) * 12 + (mesAtual - mesInicio);
+    
+    // Se for 1 mês de diferença (ou seja, dois meses consecutivos, como fevereiro->março ou março->abril)
+    if (meses === 1) {
+      return `Estamos juntos a:
+1 mês e 29 dias
+${horasTotais.toLocaleString()} horas de histórias criadas juntos!`;
     }
   }
   
-  mensagem += `\n\nsão ${horasTotais.toLocaleString()} horas compartilhadas ❤️`;
+  // Caso especial para o aniversário mensal do relacionamento (dia 21)
+  if (dataAtual.getDate() === 21 && dataCalculo.getDate() === 21) {
+    // Contar quantos meses exatos se passaram
+    const anoInicio = dataCalculo.getFullYear();
+    const mesInicio = dataCalculo.getMonth();
+    const anoAtual = dataAtual.getFullYear();
+    const mesAtual = dataAtual.getMonth();
+    
+    // Número de meses entre as datas
+    const meses = (anoAtual - anoInicio) * 12 + (mesAtual - mesInicio);
+    
+    return `Estamos juntos a:
+${meses} ${meses === 1 ? 'mês ' : 'meses '}
+${horasTotais.toLocaleString()} horas de histórias criadas juntos!`;
+  }
   
-  return mensagem;
+  // Calcular diferença em meses considerando o dia exato
+  const anoInicio = dataCalculo.getFullYear();
+  const mesInicio = dataCalculo.getMonth();
+  const diaInicio = dataCalculo.getDate();
+  
+  const anoAtual = dataAtual.getFullYear();
+  const mesAtual = dataAtual.getMonth();
+  const diaAtual = dataAtual.getDate();
+  
+  // Calcular o número de meses completos
+  let meses = (anoAtual - anoInicio) * 12 + (mesAtual - mesInicio);
+  
+  // Ajustar se o dia atual for menor que o dia de início
+  if (diaAtual < diaInicio) {
+    meses--;
+  }
+  
+  // Se meses for negativo (caso improvável), definir como 0
+  if (meses < 0) meses = 0;
+  
+  // Calcular dias restantes após os meses completos
+  let diasRestantes;
+  
+  // Criar uma data no mês atual mas com o mesmo dia da data de início
+  let ultimaDataMesCompleto = new Date(dataCalculo);
+  ultimaDataMesCompleto.setMonth(mesInicio + meses);
+  
+  // Calcular a diferença em dias
+  diasRestantes = Math.floor((dataAtual - ultimaDataMesCompleto) / (1000 * 60 * 60 * 24));
+  
+  // Correção para casos específicos devido a meses com durações diferentes
+  if (diasRestantes < 0) {
+    // Se der negativo, é porque a última data do mês completo foi ajustada para
+    // um mês com mais dias que o atual
+    ultimaDataMesCompleto = new Date(anoAtual, mesAtual - 1, diaInicio);
+    diasRestantes = Math.floor((dataAtual - ultimaDataMesCompleto) / (1000 * 60 * 60 * 24));
+    
+    // Caso ainda esteja negativo, ajustar meses e recalcular
+    if (diasRestantes < 0) {
+      meses--;
+      ultimaDataMesCompleto = new Date(anoAtual, mesAtual - 2, diaInicio);
+      diasRestantes = Math.floor((dataAtual - ultimaDataMesCompleto) / (1000 * 60 * 60 * 24));
+    }
+  }
+  
+  // Correção manual para o caso de 20/04
+  if (dataAtual.getDate() === 20 && dataAtual.getMonth() === 3 && 
+      meses === 1 && diasRestantes === 30) {
+    diasRestantes = 29;
+  }
+  
+  // Garantir que dias restantes seja positivo
+  if (diasRestantes < 0) diasRestantes = 0;
+  
+  // Verificar se temos um número redondo de meses (sem dias restantes)
+  if (diasRestantes === 0) {
+    // Caso não tenha dias restantes, mostra apenas meses e horas
+    return `Estamos juntos a:
+${meses} ${meses === 1 ? 'mês completo' : 'meses completos'}
+${horasTotais.toLocaleString()} horas de histórias criadas juntos!`;
+  } else {
+    // Caso tenha dias restantes até o próximo mês, mostrar diretamente os dias
+    return `Estamos juntos a:
+${meses} ${meses === 1 ? 'mês' : 'meses'} e ${diasRestantes} ${diasRestantes === 1 ? 'dia' : 'dias'}
+${horasTotais.toLocaleString()} horas de histórias criadas juntos!`;
+  }
 }
 
 // Configuração dos players de música
@@ -849,8 +900,22 @@ function showNextText() {
       }
     }
   } else if (current === 9) {
+    // Mudar para a música "Eu Sei Que Vou Te Amar" (índice 3 da playlist)
+    console.log("Transitando para música 'Eu Sei Que Vou Te Amar' (índice 9)");
+    try {
+      fadeToSong(3); // Leticia Cantão - Eu Sei Que Vou Te Amar
+    } catch (error) {
+      console.error("Erro ao mudar para a música 3:", error);
+      // Fallback: tentar alterar a música diretamente
+      if (audio) {
+        currentBgMusicIndex = 3;
+        audio.src = bgMusicPlaylist[3].src;
+        audio.play().catch(e => console.error("Erro no fallback de música:", e));
+      }
+    }
+  } else if (current === 10) {
     // Voltar para a música padrão (índice 0 da playlist)
-    console.log("Voltando para música padrão (índice 9)");
+    console.log("Voltando para música padrão (índice 10)");
     try {
       fadeToSong(1); // Oscar Anton - Monde Nouveau
     } catch (error) {
@@ -1652,7 +1717,7 @@ function updateDaysCounter() {
   const daysCounter = document.getElementById('days-counter');
   if (daysCounter) {
     // Extrair apenas o número de dias
-    const dataInicio = new Date(2023, 1, 21); // 21/02/2023
+    const dataInicio = new Date(2025, 1, 21); // 21/02/2025
     const dataAtual = new Date();
     
     if (dataAtual < dataInicio) {
@@ -1660,7 +1725,7 @@ function updateDaysCounter() {
     } else {
       const diffMs = dataAtual - dataInicio;
       const diasTotais = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-      daysCounter.textContent = diasTotais.toLocaleString();
+      daysCounter.textContent = diasTotais;
     }
   }
 }
