@@ -1483,9 +1483,28 @@ function setupGalleryCarousel() {
 function updateGalleryPagination() {
   const gallery = document.querySelector('.gallery');
   const items = document.querySelectorAll('.gallery .gallery-item, .gallery .video-item');
-  const dots = document.querySelectorAll('.gallery-pagination-dot');
+  const paginationContainer = document.querySelector('.gallery-pagination');
   
-  if (!gallery || !items.length || !dots.length) return;
+  if (!gallery || !items.length || !paginationContainer) return;
+  
+  // Recria os pontos de paginação se necessário
+  const existingDots = document.querySelectorAll('.gallery-pagination-dot');
+  if (existingDots.length !== items.length) {
+    // Limpar pontos existentes
+    paginationContainer.innerHTML = '';
+    
+    // Criar novos pontos com base no número atual de itens
+    items.forEach((_, index) => {
+      const dot = document.createElement('div');
+      dot.className = 'gallery-pagination-dot';
+      dot.setAttribute('data-index', index);
+      dot.addEventListener('click', () => scrollToGalleryItem(index));
+      paginationContainer.appendChild(dot);
+    });
+  }
+  
+  // Atualizar os pontos após recriá-los
+  const dots = document.querySelectorAll('.gallery-pagination-dot');
   
   // Calcular qual item está visível
   const scrollPosition = gallery.scrollLeft;
@@ -2235,6 +2254,17 @@ function uploadNewPhoto() {
           true                     // É uma imagem do servidor
         );
         
+        // No Vercel, também salvar no localStorage como fallback para evitar perda de dados
+        if (isVercelEnvironment()) {
+          // Gerar um dataURL da imagem para armazenar no localStorage
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            const dataUrl = e.target.result;
+            saveImageToLocalStorage(dataUrl, data.image.originalName, `local-${Date.now()}`);
+          };
+          reader.readAsDataURL(file);
+        }
+        
         // Atualizar os indicadores de paginação para mobile
         updateGalleryPagination();
         
@@ -2480,11 +2510,17 @@ function addImageToGallery(imageUrl, imageName, imageId, isServerImage = false) 
       </div>
       <button class="delete-photo-btn" title="Excluir imagem">×</button>
     </div>
-    <div class="gallery-image-caption">${imageName || 'Imagem carregada'}</div>
   `;
   
-  // Adicionar ao início da galeria (ou no final, dependendo da preferência)
-  galleryContainer.prepend(galleryItem);
+  // Adicionar ao final da galeria (antes do botão de adicionar)
+  const addPhotoBtn = galleryContainer.querySelector('.add-photo-btn');
+  if (addPhotoBtn) {
+    // Inserir antes do botão "Adicionar foto"
+    galleryContainer.insertBefore(galleryItem, addPhotoBtn);
+  } else {
+    // Ou adicionar ao final se o botão não for encontrado
+    galleryContainer.appendChild(galleryItem);
+  }
   
   // Adicionar à variável galleryMedia para o modal de visualização
   galleryMedia.push({
