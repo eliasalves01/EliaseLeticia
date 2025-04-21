@@ -184,8 +184,11 @@
       }
       
       .netflix-content-wrapper {
+        margin-top: 2vh;
+      }
+      
+      .netflix-who-watching {
         font-size: 32px;
-        margin-top: 5vh; /* Adicionar espaço no topo */
         margin-bottom: 5vh;
       }
       
@@ -215,13 +218,21 @@
     
     @media (max-width: 480px) {
       .netflix-profiles {
-        padding-top: 8vh;
+        padding-top: 5vh;
+        justify-content: flex-start;
       }
       
       .netflix-content-wrapper {
+        height: 90vh;
+        justify-content: space-between;
+        padding: 10px 0;
+        margin-top: 0;
+      }
+      
+      .netflix-who-watching {
         font-size: 28px;
         margin-top: 0;
-        margin-bottom: 4vh;
+        margin-bottom: 3vh;
       }
       
       .netflix-profiles-list {
@@ -246,6 +257,7 @@
         position: relative;
         bottom: auto;
         margin-top: 3vh;
+        margin-bottom: 5vh;
       }
       
       .banner-content h1 {
@@ -264,6 +276,47 @@
       
       .gallery-item, .video-item {
         height: 180px;
+      }
+    }
+    
+    @media (max-height: 600px) and (max-width: 480px) {
+      /* Ajustes específicos para telas muito pequenas */
+      .netflix-profiles {
+        padding-top: 2vh;
+        height: auto;
+        min-height: 100vh;
+      }
+      
+      .netflix-content-wrapper {
+        height: auto;
+        min-height: 90vh;
+      }
+      
+      .netflix-who-watching {
+        font-size: 24px;
+        margin-bottom: 2vh;
+      }
+      
+      .netflix-profile-avatar img {
+        border-radius: 10px;
+      }
+      
+      .netflix-profile, 
+      .netflix-add-profile {
+        min-width: 100px;
+      }
+      
+      .netflix-profile-name, 
+      .netflix-add-profile-name {
+        font-size: 16px;
+        margin-top: 5px;
+      }
+      
+      .netflix-skip-button {
+        margin-top: 2vh;
+        margin-bottom: 3vh;
+        padding: 6px 12px;
+        font-size: 16px;
       }
     }
     
