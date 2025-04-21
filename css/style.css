@@ -942,6 +942,15 @@ main.show {
   pointer-events: all;
 }
 
+/* Suporte para classe 'hidden' do Tailwind */
+#video-modal.hidden {
+  display: none;
+}
+
+#video-modal:not(.hidden) {
+  display: flex;
+}
+
 #video-modal video {
   width: 90%;
   max-width: 800px;

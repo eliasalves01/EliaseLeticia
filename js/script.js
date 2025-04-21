@@ -47,7 +47,12 @@ let currentMediaIndex = 0;
 const galleryMedia = [
   { src: "assets/foto1.jpg", caption: "Nosso primeiro encontro", type: "image" },
   { src: "assets/foto2.jpeg", caption: "Nosso passeio especial", type: "image" },
+  { src: "assets/foto4.jpg", caption: "Momentos que ficam na memória", type: "image" },
+  { src: "assets/foto5.jpg", caption: "Cada dia é especial ao seu lado", type: "image" },
+  { src: "assets/foto6.jpg", caption: "Nossa conexão é única", type: "image" },
+  { src: "assets/foto7.jpg", caption: "Amor que transborda", type: "image" },
   { src: "assets/video2.mp4", caption: "Nosso vídeo especial", type: "video" },
+  { src: "assets/video3.mp4", caption: "Mais momentos inesquecíveis", type: "video" },
   { src: "assets/foto3.jpeg", caption: "Mais um momento especial", type: "image" }
 ];
 
@@ -75,21 +80,21 @@ const texts = [
 
 // Definir tempos de exibição personalizados para cada texto (em milissegundos)
 const textDurations = [
-  4500,  // Texto 0: "No instante em que nossos olhos se encontraram..."
-  4500,  // Texto 1: "Eu senti que o universo conspirava para nos unir"
-  5000,  // Texto 2: "Seu sorriso iluminou meu mundo..."
-  5000,  // Texto 3: "E desde então, cada momento ao seu lado tem sido unicos"
-  5000,  // Texto 4: "Essas músicas são a trilha sonora da nossa história"
-  5000,  // Texto 5: "Cada melodia guarda um pedaço do nosso amor"
-  15000,  // Texto 6: "Lembra quando ouvimos 'I Wanna Be Yours'..."
-  8000,  // Texto 7: "Ou quando 'Monde Nouveau' tocou..."
-  5500,  // Texto 9: "São nessas pequenas lembranças que nosso amor se fortalece"
-  5500,  // Texto 10: "E mesmo quando as notas terminam, nosso amor continua ecoando"
-  5500,  // Texto 11: "Você é a melodia que embala meus dias e acalenta minhas noites"
-  5500,  // Texto 12: "Prometo ser o refrão que sempre se repete no seu coração"
-  6000,  // Texto 13: "Nosso amor é como uma música perfeita - sem fim, apenas harmonia"
-  8000,  // Texto 14: calcularTempoRelacionamento() - Precisa de mais tempo pois é dinâmico
-  7000   // Texto 15: "Te amo mais que todas as estrelas no céu e todas as notas já cantadas"
+  1,  // Texto 0: "No instante em que nossos olhos se encontraram..."
+  1,  // Texto 1: "Eu senti que o universo conspirava para nos unir"
+  1,  // Texto 2: "Seu sorriso iluminou meu mundo..."
+  1,  // Texto 3: "E desde então, cada momento ao seu lado tem sido unicos"
+  1,  // Texto 4: "Essas músicas são a trilha sonora da nossa história"
+  1,  // Texto 5: "Cada melodia guarda um pedaço do nosso amor"
+  1,  // Texto 6: "Lembra quando ouvimos 'I Wanna Be Yours'..."
+  2,  // Texto 7: "Ou quando 'Monde Nouveau' tocou..."
+  2,  // Texto 9: "São nessas pequenas lembranças que nosso amor se fortalece"
+  2,  // Texto 10: "E mesmo quando as notas terminam, nosso amor continua ecoando"
+  2,  // Texto 11: "Você é a melodia que embala meus dias e acalenta minhas noites"
+  2,  // Texto 12: "Prometo ser o refrão que sempre se repete no seu coração"
+  2,  // Texto 13: "Nosso amor é como uma música perfeita - sem fim, apenas harmonia"
+  2,  // Texto 14: calcularTempoRelacionamento() - Precisa de mais tempo pois é dinâmico
+  2   // Texto 15: "Te amo mais que todas as estrelas no céu e todas as notas já cantadas"
 ];
 
 // Elementos DOM
@@ -795,39 +800,85 @@ function setupVideo() {
 
 // Configuração do modal de vídeo
 function setupVideoModal() {
+  console.log("Configurando modal de vídeo");
   const btnPlay = document.querySelector('.btn-play');
   const videoModal = document.getElementById('video-modal');
   const modalVideo = document.getElementById('modal-video');
   const closeModal = document.getElementById('close-modal');
   const bgMusic = document.getElementById('bg-music');
 
-  btnPlay.addEventListener('click', () => {
+  if (!btnPlay) {
+    console.error("Botão de play não encontrado");
+    return;
+  }
+
+  if (!videoModal) {
+    console.error("Modal de vídeo não encontrado");
+    return;
+  }
+
+  if (!modalVideo) {
+    console.error("Vídeo do modal não encontrado");
+    return;
+  }
+
+  if (!closeModal) {
+    console.error("Botão de fechar modal não encontrado");
+    return;
+  }
+
+  btnPlay.addEventListener('click', function() {
+    console.log("Botão Assistir clicado");
     videoModal.classList.remove('hidden');
-    modalVideo.play();
-    bgMusic.pause();
-  });
-
-  closeModal.addEventListener('click', () => {
-    modalVideo.pause();
-    videoModal.classList.add('hidden');
-    bgMusic.play();
-  });
-
-  videoModal.addEventListener('click', (e) => {
-    if (e.target === videoModal) {
-      modalVideo.pause();
-      videoModal.classList.add('hidden');
-      bgMusic.play();
+    videoModal.classList.add('active'); // Adicionar classe 'active' para exibir o modal
+    
+    // Verificação adicional para dispositivos iOS e outros navegadores problemáticos
+    if (window.getComputedStyle(videoModal).display === 'none') {
+      videoModal.style.display = 'flex'; // Forçar display flex para segurança
+      console.log("Aplicando display:flex diretamente por segurança");
+    }
+    
+    // Garantir que o vídeo tenha uma fonte
+    const source = modalVideo.querySelector('source');
+    if (source && !source.src) {
+      source.src = "assets/video.mp4";
+      modalVideo.load();
+    }
+    
+    try {
+      modalVideo.play()
+        .then(() => console.log("Vídeo iniciado com sucesso"))
+        .catch(err => console.error("Erro ao iniciar vídeo:", err));
+    } catch (e) {
+      console.error("Erro ao tentar reproduzir vídeo:", e);
+    }
+    
+    if (bgMusic) {
+      bgMusic.pause();
     }
   });
 
-  modalVideo.addEventListener('play', () => {
-    bgMusic.pause();
+  closeModal.addEventListener('click', function() {
+    console.log("Botão fechar clicado");
+    modalVideo.pause();
+    videoModal.classList.remove('active'); // Remover a classe 'active'
+    videoModal.classList.add('hidden');
+    
+    if (bgMusic) {
+      bgMusic.play().catch(e => console.log("Erro ao retomar música:", e));
+    }
   });
 
-  modalVideo.addEventListener('pause', () => {
-    if (!videoModal.classList.contains('hidden')) {
-      bgMusic.play();
+  videoModal.addEventListener('click', function(e) {
+    if (e.target === videoModal) {
+      console.log("Clique fora do vídeo");
+      modalVideo.pause();
+      videoModal.classList.remove('active'); // Remover a classe 'active'
+      videoModal.classList.add('hidden');
+      
+      if (bgMusic) {
+        bgMusic.play().catch(e => console.log("Erro ao retomar música:", e));
+      }
     }
   });
 }
@@ -1349,116 +1400,97 @@ function pauseCurrentMedia() {
   }
 }
 
+// Função para abrir o modal de mídia (chamada pelos elementos da galeria)
 function openMediaModal(mediaSrc, caption, type) {
   const mediaModal = document.getElementById('media-modal');
   const mediaContainer = document.getElementById('media-container');
   const mediaCaption = document.getElementById('media-caption');
   const bgMusic = document.getElementById('bg-music');
   
+  // Se não encontrar os elementos, encerrar
   if (!mediaModal || !mediaContainer || !mediaCaption) {
-    console.error('Elementos do modal de mídia não encontrados');
+    console.error('Elementos do modal não encontrados');
     return;
   }
   
-  // Pausar música de fundo se estiver tocando e o tipo for vídeo
-  if (type === 'video' && bgMusic && !bgMusic.paused) {
-    bgMusic.pause();
-  }
-  
-  // Encontrar o índice da mídia clicada
-  currentMediaIndex = galleryMedia.findIndex(media => 
-    media.src === mediaSrc && media.type === type
-  );
-  
-  if (currentMediaIndex === -1) {
-    console.warn('Mídia não encontrada no array galleryMedia:', mediaSrc);
-    currentMediaIndex = 0;
-  }
-  
-  // Limpar o container
+  // Limpar conteúdo anterior
   mediaContainer.innerHTML = '';
   
-  // Criar o elemento apropriado baseado no tipo
-  if (type === 'image') {
-    const imgElement = document.createElement('img');
-    imgElement.src = mediaSrc;
-    imgElement.alt = caption;
-    imgElement.className = 'max-w-full max-h-[80vh] mx-auto rounded-lg';
-    mediaContainer.appendChild(imgElement);
-  } else if (type === 'video') {
-    const videoElement = document.createElement('video');
-    videoElement.src = mediaSrc;
-    videoElement.controls = true;
-    videoElement.autoplay = true;
-    videoElement.className = 'max-w-full max-h-[80vh] mx-auto rounded-lg';
-    mediaContainer.appendChild(videoElement);
+  // Encontrar o índice no array de mídia
+  currentMediaIndex = galleryMedia.findIndex(item => item.src === mediaSrc);
+  if (currentMediaIndex === -1) {
+    // Se não encontrado no array, usar os parâmetros fornecidos
+    currentMediaIndex = 0; // Definir como 0 por segurança
+    
+    console.log(`Mídia não encontrada no array, usando parâmetros: ${mediaSrc}, ${caption}, ${type}`);
   }
   
-  // Atualizar legenda
+  // Criar e adicionar o elemento apropriado
+  if (type === 'video') {
+    // Pausar música de fundo ao reproduzir vídeo
+    if (bgMusic && !bgMusic.paused) {
+      bgMusic.pause();
+    }
+    
+    const video = document.createElement('video');
+    video.className = 'max-w-full max-h-[80vh] rounded-lg';
+    video.controls = true;
+    video.src = mediaSrc;
+    video.autoplay = true;
+    mediaContainer.appendChild(video);
+  } else {
+    const img = document.createElement('img');
+    img.className = 'max-w-full max-h-[80vh] rounded-lg';
+    img.src = mediaSrc;
+    img.alt = caption;
+    mediaContainer.appendChild(img);
+  }
+  
+  // Definir legenda
   mediaCaption.textContent = caption;
   
-  // Exibir o modal - removendo a classe hidden
+  // Mostrar o modal
   mediaModal.classList.remove('hidden');
+  document.body.style.overflow = 'hidden'; // Evitar rolagem no fundo
   
-  // Verificar se o display é none e corrigi-lo
-  if (window.getComputedStyle(mediaModal).display === 'none') {
-    mediaModal.style.display = 'flex';
+  // Verificar e mostrar/ocultar botões de navegação
+  const prevButton = document.querySelector('.media-nav.prev');
+  const nextButton = document.querySelector('.media-nav.next');
+  
+  if (prevButton && nextButton) {
+    if (galleryMedia.length <= 1) {
+      prevButton.classList.add('hidden');
+      nextButton.classList.add('hidden');
+    } else {
+      prevButton.classList.remove('hidden');
+      nextButton.classList.remove('hidden');
+    }
   }
-  
-  document.body.style.overflow = 'hidden'; // Impedir rolagem
 }
 
+// Função para navegar entre as mídias
 function navigateMedia(direction) {
-  // Pausar qualquer mídia atual
+  // Garantir que temos a lista de mídia e o índice atual
+  if (!galleryMedia || galleryMedia.length === 0) {
+    console.error('Array de mídia não disponível ou vazio');
+    return;
+  }
+  
+  // Pausar qualquer mídia atual (especialmente vídeos)
   pauseCurrentMedia();
   
+  // Calcular o novo índice
   if (direction === 'prev') {
     currentMediaIndex = (currentMediaIndex - 1 + galleryMedia.length) % galleryMedia.length;
   } else {
     currentMediaIndex = (currentMediaIndex + 1) % galleryMedia.length;
   }
   
-  const mediaItem = galleryMedia[currentMediaIndex];
-  const mediaContainer = document.getElementById('media-container');
-  const mediaCaption = document.getElementById('media-caption');
-  const bgMusic = document.getElementById('bg-music');
+  // Obter a mídia correspondente
+  const media = galleryMedia[currentMediaIndex];
   
-  // Pausar música de fundo se estiver tocando e o tipo for vídeo
-  if (mediaItem.type === 'video' && bgMusic && !bgMusic.paused) {
-    bgMusic.pause();
-  }
-  
-  // Aplicar efeito de transição
-  mediaContainer.style.opacity = '0';
-  mediaCaption.style.opacity = '0';
-  
-  setTimeout(() => {
-    // Limpar o container
-    mediaContainer.innerHTML = '';
-    
-    // Criar o elemento apropriado baseado no tipo
-    if (mediaItem.type === 'image') {
-      const imgElement = document.createElement('img');
-      imgElement.src = mediaItem.src;
-      imgElement.alt = mediaItem.caption;
-      imgElement.className = 'max-w-full max-h-[80vh] mx-auto rounded-lg';
-      mediaContainer.appendChild(imgElement);
-    } else if (mediaItem.type === 'video') {
-      const videoElement = document.createElement('video');
-      videoElement.src = mediaItem.src;
-      videoElement.controls = true;
-      videoElement.autoplay = true;
-      videoElement.className = 'max-w-full max-h-[80vh] mx-auto rounded-lg';
-      mediaContainer.appendChild(videoElement);
-    }
-    
-    // Atualizar legenda
-    mediaCaption.textContent = mediaItem.caption;
-    
-    // Restaurar opacidade
-    mediaContainer.style.opacity = '1';
-    mediaCaption.style.opacity = '1';
-  }, 300);
+  // Abrir a mídia
+  openMediaModal(media.src, media.caption, media.type);
 }
 
 // Função para atualizar o display do carrossel
@@ -1703,7 +1735,6 @@ function setupBgMusicPlaylist() {
   });
 }
 
-// Função para atualizar o contador de dias na seção Netflix
 function updateDaysCounter() {
   const daysCounter = document.getElementById('days-counter');
   if (!daysCounter) return;
@@ -1714,23 +1745,14 @@ function updateDaysCounter() {
   
   // Como a data de início está no futuro, simular relacionamento de 60 dias
   if (dataAtual < dataInicio) {
-    // Para garantir exatamente 60 dias, definimos diretamente
-    daysCounter.textContent = "60";
+    // Criar uma data 60 dias atrás para simular 2 meses de relacionamento
+    const dataSimulada = new Date();
+    dataSimulada.setDate(dataAtual.getDate() - 60);
     
-    // Configurar um temporizador para atualizar o contador à meia-noite
-    const agora = new Date();
-    const amanha = new Date(agora);
-    amanha.setDate(agora.getDate() + 1);
-    amanha.setHours(0, 0, 10, 0); // Ajustar para meia-noite e 10 segundos
-    
-    const tempoAteAmanha = amanha - agora;
-    
-    // Atualizar o contador à meia-noite de cada dia
-    setTimeout(() => {
-      updateDaysCounter(); // Atualizar contador
-      // Configurar para atualizar todos os dias
-      setInterval(updateDaysCounter, 24 * 60 * 60 * 1000);
-    }, tempoAteAmanha);
+    // Calcular dias entre a data simulada e hoje
+    const diffMs = dataAtual - dataSimulada;
+    const diasTotais = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+    daysCounter.textContent = diasTotais;
   } else {
     // Se a data real já chegou, usar a data real
     const diffMs = dataAtual - dataInicio;
