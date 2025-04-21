@@ -59,18 +59,18 @@ const texts = [
   "No instante em que nossos olhos se encontraram pela primeira vez...",  // 0
   "Eu senti que o universo conspirava para nos unir", // 1
   "Seu sorriso iluminou meu mundo de uma forma que nunca imaginei possível", // 2
-  "E desde então, cada dia ao seu lado tem sido uma bênção", // 3
-  calcularTempoRelacionamento(), // Texto dinâmico com o tempo juntos 4
-  "Essas músicas são a trilha sonora da nossa história", // 5
-  "Cada melodia guarda um pedaço do nosso amor", // 6
-  "Lembra quando ouvimos 'I Wanna Be Yours' pela primeira vez juntos?", // 7
-  "Ou quando 'Monde Nouveau' tocou e você disse que era nossa música?", // 8
+  "E desde então, cada momento ao seu lado tem sido unicos ", // 3
+  "Essas músicas são a trilha sonora da nossa história", // 4
+  "Cada melodia guarda um pedaço do nosso amor", // 5
+  "Lembra quando ouvimos 'I Wanna Be Yours' pela primeira vez juntos?", // 6
+  "Ou quando 'Monde Nouveau' tocou e você disse que era nossa música?", // 7
   "São nessas pequenas lembranças que nosso amor se fortalece", // 9
   "E mesmo quando as notas terminam, nosso amor continua ecoando", // 10
   "Você é a melodia que embala meus dias e acalenta minhas noites", // 11 
   "Prometo ser o refrão que sempre se repete no seu coração", // 12
-  "Nosso amor é como uma música perfeita - sem fim, apenas harmonia", // 13
-  "Te amo mais que todas as estrelas no céu e todas as notas já cantadas" // 14
+  "Nosso amor é como uma música perfeita, sem fim, apenas harmonia", // 13
+  calcularTempoRelacionamento(), // Texto dinâmico com o tempo juntos 14
+  "Te amo mais que todas as estrelas no céu e todas as notas já cantadas" // 15
 ];
 
 // Definir tempos de exibição personalizados para cada texto (em milissegundos)
@@ -78,18 +78,18 @@ const textDurations = [
   4500,  // Texto 0: "No instante em que nossos olhos se encontraram..."
   4500,  // Texto 1: "Eu senti que o universo conspirava para nos unir"
   5000,  // Texto 2: "Seu sorriso iluminou meu mundo..."
-  5000,  // Texto 3: "E desde então, cada dia ao seu lado tem sido uma bênção"
-  6000,  // Texto 4: calcularTempoRelacionamento() - Precisa de mais tempo pois é dinâmico
-  5000,  // Texto 5: "Essas músicas são a trilha sonora da nossa história"
-  5000,  // Texto 6: "Cada melodia guarda um pedaço do nosso amor"
-  15000,  // Texto 7: "Lembra quando ouvimos 'I Wanna Be Yours'..."
-  10000,  // Texto 8: "Ou quando 'Monde Nouveau' tocou..."
+  5000,  // Texto 3: "E desde então, cada momento ao seu lado tem sido unicos"
+  5000,  // Texto 4: "Essas músicas são a trilha sonora da nossa história"
+  5000,  // Texto 5: "Cada melodia guarda um pedaço do nosso amor"
+  15000,  // Texto 6: "Lembra quando ouvimos 'I Wanna Be Yours'..."
+  8000,  // Texto 7: "Ou quando 'Monde Nouveau' tocou..."
   5500,  // Texto 9: "São nessas pequenas lembranças que nosso amor se fortalece"
   5500,  // Texto 10: "E mesmo quando as notas terminam, nosso amor continua ecoando"
   5500,  // Texto 11: "Você é a melodia que embala meus dias e acalenta minhas noites"
   5500,  // Texto 12: "Prometo ser o refrão que sempre se repete no seu coração"
   6000,  // Texto 13: "Nosso amor é como uma música perfeita - sem fim, apenas harmonia"
-  7000   // Texto 14: "Te amo mais que todas as estrelas no céu e todas as notas já cantadas"
+  8000,  // Texto 14: calcularTempoRelacionamento() - Precisa de mais tempo pois é dinâmico
+  7000   // Texto 15: "Te amo mais que todas as estrelas no céu e todas as notas já cantadas"
 ];
 
 // Elementos DOM
@@ -120,6 +120,10 @@ document.addEventListener('DOMContentLoaded', function() {
   setupGalleryCarousel();
   setupVideoPreview();
   setupBgMusicPlaylist(); // Configurar a playlist de música de fundo
+  updateDaysCounter(); // Atualizar o contador de dias da seção Netflix
+
+  // Configurar atualização periódica do contador de dias (a cada hora)
+  setInterval(updateDaysCounter, 3600000);
   
   // Tenta autoplay após interação do usuário
   document.body.addEventListener('click', function initialPlay() {
@@ -871,25 +875,25 @@ function showNextText() {
   console.log(`Preparando texto ${current+1}/${texts.length} (índice: ${current})`);
   
   // Transição de música com base no índice atual
-  if (current === 7) {
-    // Mudar para a música "I Wanna Be Yours" (índice 2 da playlist)
-    console.log("Transitando para música 'I Wanna Be Yours' (índice 7)");
+  if (current === 6) {
+    // Mudar para a música "I Wanna Be Yours" (índice 1 da playlist)
+    console.log("Transitando para música 'I Wanna Be Yours' (índice 6)");
     try {
-      fadeToSong(2); // Arctic Monkeys - I Wanna Be Yours
+      fadeToSong(1); // Arctic Monkeys - I Wanna Be Yours
     } catch (error) {
-      console.error("Erro ao mudar para a música 2:", error);
+      console.error("Erro ao mudar para a música 1:", error);
       // Fallback: tentar alterar a música diretamente
       if (audio) {
-        currentBgMusicIndex = 2;
-        audio.src = bgMusicPlaylist[2].src;
+        currentBgMusicIndex = 1;
+        audio.src = bgMusicPlaylist[1].src;
         audio.play().catch(e => console.error("Erro no fallback de música:", e));
       }
     }
-  } else if (current === 8) {
+  } else if (current === 7) {
     // Mudar para a música "Monde Nouveau" (índice 0 da playlist)
-    console.log("Transitando para música 'Monde Nouveau' (índice 8)");
+    console.log("Transitando para música 'Monde Nouveau' (índice 7)");
     try {
-      fadeToSong(1); // Oscar Anton - Monde Nouveau
+      fadeToSong(0); // Oscar Anton - Monde Nouveau
     } catch (error) {
       console.error("Erro ao mudar para a música 0:", error);
       // Fallback: tentar alterar a música diretamente
@@ -899,25 +903,11 @@ function showNextText() {
         audio.play().catch(e => console.error("Erro no fallback de música:", e));
       }
     }
-  } else if (current === 9) {
-    // Mudar para a música "Eu Sei Que Vou Te Amar" (índice 3 da playlist)
-    console.log("Transitando para música 'Eu Sei Que Vou Te Amar' (índice 9)");
-    try {
-      fadeToSong(3); // Leticia Cantão - Eu Sei Que Vou Te Amar
-    } catch (error) {
-      console.error("Erro ao mudar para a música 3:", error);
-      // Fallback: tentar alterar a música diretamente
-      if (audio) {
-        currentBgMusicIndex = 3;
-        audio.src = bgMusicPlaylist[3].src;
-        audio.play().catch(e => console.error("Erro no fallback de música:", e));
-      }
-    }
-  } else if (current === 10) {
+  }  else if (current === 9) {
     // Voltar para a música padrão (índice 0 da playlist)
-    console.log("Voltando para música padrão (índice 10)");
+    console.log("Voltando para música padrão (índice 9)");
     try {
-      fadeToSong(1); // Oscar Anton - Monde Nouveau
+      fadeToSong(0); // Oscar Anton - Monde Nouveau
     } catch (error) {
       console.error("Erro ao voltar para a música padrão:", error);
       // Fallback: tentar alterar a música diretamente
@@ -1190,7 +1180,7 @@ function continueAfterMusic() {
       audio.play().catch(err => console.log("Erro ao iniciar música:", err));
     }
     
-    // Definir o próximo texto para exibir - INÍCIO DO 5º TEXTO (ÍNDICE 4)
+    // Definir o próximo texto para exibir após a seção de música
     current = 4; 
     console.log(`Voltando à sequência de textos a partir do índice ${current}, próximo texto: ${texts[current].substring(0, 30)}...`);
     
@@ -1713,20 +1703,39 @@ function setupBgMusicPlaylist() {
   });
 }
 
+// Função para atualizar o contador de dias na seção Netflix
 function updateDaysCounter() {
   const daysCounter = document.getElementById('days-counter');
-  if (daysCounter) {
-    // Extrair apenas o número de dias
-    const dataInicio = new Date(2025, 1, 21); // 21/02/2025
-    const dataAtual = new Date();
+  if (!daysCounter) return;
+  
+  // Usar a mesma data inicial que a função calcularTempoRelacionamento: 21/02/2025
+  const dataInicio = new Date(2025, 1, 21); // 21/02/2025 (mês é 1 pois em JavaScript janeiro=0, fevereiro=1)
+  const dataAtual = new Date();
+  
+  // Como a data de início está no futuro, simular relacionamento de 60 dias
+  if (dataAtual < dataInicio) {
+    // Para garantir exatamente 60 dias, definimos diretamente
+    daysCounter.textContent = "60";
     
-    if (dataAtual < dataInicio) {
-      daysCounter.textContent = '0';
-    } else {
-      const diffMs = dataAtual - dataInicio;
-      const diasTotais = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-      daysCounter.textContent = diasTotais;
-    }
+    // Configurar um temporizador para atualizar o contador à meia-noite
+    const agora = new Date();
+    const amanha = new Date(agora);
+    amanha.setDate(agora.getDate() + 1);
+    amanha.setHours(0, 0, 10, 0); // Ajustar para meia-noite e 10 segundos
+    
+    const tempoAteAmanha = amanha - agora;
+    
+    // Atualizar o contador à meia-noite de cada dia
+    setTimeout(() => {
+      updateDaysCounter(); // Atualizar contador
+      // Configurar para atualizar todos os dias
+      setInterval(updateDaysCounter, 24 * 60 * 60 * 1000);
+    }, tempoAteAmanha);
+  } else {
+    // Se a data real já chegou, usar a data real
+    const diffMs = dataAtual - dataInicio;
+    const diasTotais = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+    daysCounter.textContent = diasTotais;
   }
 }
 
@@ -1989,8 +1998,31 @@ function fadeToSong(songIndex) {
     // Carregar e tocar a música
     audio.load();
     
+    // Se for a música do índice 1 (I Wanna Be Yours), definir para começar em 50 segundos
+    if (songIndex === 1) {
+      const playPromise = audio.play();
+      
+      if (playPromise !== undefined) {
+        playPromise.then(() => {
+          // Só podemos definir currentTime após um play bem-sucedido em mobile
+          setTimeout(() => {
+            audio.currentTime = 50;
+            console.log("Música I Wanna Be Yours iniciada em 50s (dispositivo móvel)");
+            
+            // Restaurar volume (apenas Android)
+            if (!isIOS) {
+              audio.volume = 1.0;
+            }
+          }, 100);
+        }).catch(error => {
+          console.error("Erro ao iniciar reprodução em mobile:", error);
+          // Tentar novamente sem definir o tempo
+          audio.play().catch(e => console.error("Segundo erro ao reproduzir:", e));
+        });
+      }
+    } 
     // Para a música 2, definir tempo inicial após carregar
-    if (songIndex === 2) {
+    else if (songIndex === 2) {
       // Em dispositivos móveis, é mais confiável definir currentTime após um play()
       const playPromise = audio.play();
       
@@ -2050,8 +2082,16 @@ function fadeToSong(songIndex) {
       currentBgMusicIndex = songIndex;
       audio.src = bgMusicPlaylist[currentBgMusicIndex].src;
       
-      // Se for a música 2 (I Wanna Be Yours), começar a tocar a partir de 16 segundos
-      if (songIndex === 2) {
+      // Se for a música 1 (I Wanna Be Yours), começar a tocar a partir de 50 segundos
+      if (songIndex === 1) {
+        audio.addEventListener('loadedmetadata', function startFromMiddle() {
+          audio.currentTime = 50; // Começar a partir de 50 segundos
+          console.log("Música I Wanna Be Yours iniciada em 50s (desktop)");
+          audio.removeEventListener('loadedmetadata', startFromMiddle);
+        });
+      }
+      // Se for a música 2 (Arctic Monkeys), começar a tocar a partir de 16 segundos
+      else if (songIndex === 2) {
         audio.addEventListener('loadedmetadata', function startFromMiddle() {
           audio.currentTime = 16; // Começar a partir de 16 segundos
           console.log("Música 2 iniciada em 16s (desktop)");
