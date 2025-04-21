@@ -211,9 +211,9 @@ main.show {
 }
 
 .banner-content {
-  max-width: 50%;
   position: relative;
   z-index: 10;
+  max-width: 600px;
 }
 
 .banner-content h1 {
@@ -251,8 +251,9 @@ main.show {
 
 .buttons {
   display: flex;
-  gap: 15px;
+  gap: 10px;
   margin-top: 20px;
+  align-items: center;
   flex-wrap: wrap;
 }
 
@@ -1073,140 +1074,121 @@ main.show {
 
 @media (max-width: 768px) {
   :root {
-    --font-size-xl: 3.5rem;
-    --font-size-lg: 2rem;
-    --font-size-md: 1.3rem;
+    --font-size-xl: 3rem;
+    --font-size-lg: 1.8rem;
+    --font-size-md: 1.2rem;
     --font-size-sm: 1rem;
-    --font-size-xs: 0.85rem;
+    --font-size-xs: 0.8rem;
   }
   
+  /* HEADER */
   header {
-    padding: 10px 15px;
+    padding: 12px 15px;
+    flex-direction: column;
+    align-items: flex-start;
   }
   
   nav ul {
-    gap: 8px;
+    margin-top: 10px;
+    justify-content: flex-start;
   }
   
+  /* BANNER */
   .banner {
-    padding: 40px 30px;
-    height: auto;
-    min-height: 100vh;
+    padding: 30px 20px;
   }
   
   .banner-content {
-    padding-bottom: 40px;
-    margin-bottom: 50px;
+    max-width: 100%;
   }
   
+  /* MUSIC SECTION */
   .music-section h1.highlight {
-    font-size: 2.2rem;
+    padding: 0;
   }
   
   .subtitle {
-    font-size: 0.9rem;
+    max-width: 100%;
   }
   
   .music-player {
-    padding: 12px;
+    max-width: 100%;
+    padding: 15px;
+  }
+  
+  .album-cover {
+    width: 60px;
+    height: 60px;
+  }
+}
+
+@media (max-width: 576px) {
+  :root {
+    --font-size-xl: 2.5rem; 
+    --font-size-lg: 1.6rem;
+    --font-size-md: 1.1rem;
+    --font-size-sm: 1rem;
+    --font-size-xs: 0.75rem;
+  }
+  
+  .text-container {
+    font-size: var(--font-size-md);
+    max-width: 95%;
+  }
+  
+  .start-btn {
+    padding: 12px 25px;
+  }
+  
+  .tagline {
+    font-size: var(--font-size-sm);
+  }
+  
+  .btn-play, .btn-list, .btn-voice {
+    padding: 10px 20px;
+    font-size: var(--font-size-xs);
+    margin-bottom: 8px;
+  }
+  
+  /* MUSIC SECTION */
+  .music-section {
+    padding: 15px;
+  }
+  
+  .subtitle {
+    font-size: 1.1rem;
+  }
+  
+  /* GALLERY */
+  .moments {
+    padding: 30px 20px;
+  }
+
+  .music-player {
+    padding: 10px;
   }
   
   .album-cover {
     width: 50px;
     height: 50px;
   }
-}
-
-@media (max-width: 576px) {
-  :root {
-    --font-size-xl: 3rem;
-    --font-size-lg: 1.8rem;
-    --font-size-md: 1.2rem;
-    --font-size-sm: 0.9rem;
-    --font-size-xs: 0.8rem;
-  }
-  
-  .text-container {
-    font-size: 1.5rem;
-  }
-  
-  .start-btn {
-    padding: 12px 20px;
-  }
-  
-  .tagline {
-    font-size: 0.8rem;
-    -webkit-line-clamp: 4;
-    max-height: 80px;
-    margin-bottom: 15px;
-  }
-  
-  .banner {
-    padding: 30px 20px;
-    align-items: center;
-  }
-
-  .banner-content {
-    transform: translateY(-30px);
-    padding-bottom: 60px;
-  }
-  
-  .days-together {
-    margin-bottom: 10px;
-  }
-  
-  .btn-play, .btn-list, .btn-voice {
-    padding: 8px 12px;
-    font-size: 0.8rem;
-    margin-right: 8px;
-    margin-bottom: 8px;
-  }
-  
-  .music-section {
-    padding: 30px 20px;
-  }
-  
-  .subtitle {
-    font-size: 0.8rem;
-  }
-  
-  .moments {
-    padding: 20px 10px;
-  }
-  
-  .music-player {
-    padding: 10px;
-  }
-  
-  .album-cover {
-    width: 45px;
-    height: 45px;
-  }
   
   .song-title {
-    font-size: 0.9rem;
+    font-size: 1rem;
   }
   
   .artist {
-    font-size: 0.7rem;
+    font-size: 0.9rem;
   }
 }
 
 @media (max-width: 400px) {
   :root {
-    --font-size-xl: 2.5rem;
-    --font-size-lg: 1.6rem;
-    --font-size-md: 1.1rem;
+    --font-size-xl: 2.2rem;
+    --font-size-lg: 1.4rem;
+    --font-size-md: 1rem;
     --font-size-sm: 0.85rem;
-    --font-size-xs: 0.75rem;
-  }
-  
-  .banner {
-    padding: 20px 15px;
-  }
-
-  .banner-content {
-    transform: translateY(-50px);
+    --font-size-xs: 0.7rem;
   }
   
   .buttons {
@@ -1214,23 +1196,72 @@ main.show {
   }
   
   .btn-play, .btn-list, .btn-voice {
-    padding: 7px 10px;
-    font-size: 0.75rem;
-    margin-right: 6px;
-    margin-bottom: 6px;
+    width: 100%;
   }
 }
 
-/* Ajuste específico para telas menores em modo paisagem */
-@media (max-height: 650px) {
+/* DISPOSITIVOS EM MODO PAISAGEM */
+@media (max-height: 500px) and (orientation: landscape) {
+  :root {
+    --font-size-xl: 2.2rem;
+    --font-size-lg: 1.5rem;
+    --font-size-md: 1rem;
+    --font-size-sm: 0.85rem;
+  }
+  
   .banner-content {
-    transform: translateY(-60px);
+    padding-bottom: 5vh;
   }
   
   .tagline {
-    -webkit-line-clamp: 2;
-    max-height: 50px;
-    margin-bottom: 10px;
+    margin: 5px 0;
+  }
+  
+  .buttons {
+    margin-top: 10px;
+  }
+  
+  .music-section {
+    padding-top: 60px;
+  }
+  
+  .start-btn {
+    padding: 10px 20px;
+  }
+  
+  .text-container {
+    font-size: var(--font-size-md);
+  }
+}
+
+@media (max-width: 768px) {
+  .text-container {
+    max-width: 95%;
+    padding: 0 5px;
+    font-size: calc(var(--font-size-lg) - 0.3rem);
+  }
+}
+
+@media (max-width: 576px) {
+  .text-container {
+    font-size: var(--font-size-md);
+    line-height: 1.4;
+  }
+}
+
+@media (max-width: 400px) {
+  .text-container {
+    font-size: calc(var(--font-size-md) - 0.1rem);
+    max-width: 100%;
+    line-height: 1.3;
+  }
+}
+
+@media (max-height: 500px) and (orientation: landscape) {
+  .text-container {
+    font-size: var(--font-size-md);
+    max-width: 80%;
+    line-height: 1.3;
   }
 }
 
@@ -1558,53 +1589,5 @@ video::-webkit-media-controls-timeline {
     width: 32px;
     height: 32px;
     font-size: 16px;
-  }
-}
-
-/* Garantir que os botões estejam sempre visíveis */
-@media screen and (max-height: 700px) {
-  .banner {
-    align-items: center;
-  }
-  
-  .banner-content {
-    transform: translateY(-40px);
-  }
-  
-  .tagline {
-    -webkit-line-clamp: 3;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    max-height: 4.8em;
-  }
-}
-
-/* Ajuste extremo para telas muito pequenas */
-@media screen and (max-height: 550px) {
-  .banner-content {
-    transform: translateY(-60px);
-  }
-  
-  .tagline {
-    -webkit-line-clamp: 2;
-    max-height: 3.2em;
-  }
-}
-
-/* Ocultar elementos menos importantes em telas muito pequenas */
-@media screen and (max-height: 450px) {
-  .youtube-badges {
-    display: none;
-  }
-  
-  .tagline {
-    -webkit-line-clamp: 1;
-    max-height: 1.6em;
-  }
-  
-  .banner-content {
-    transform: translateY(-70px);
   }
 }

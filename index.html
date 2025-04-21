@@ -45,7 +45,16 @@
       justify-content: center;
       align-items: center;
       overflow: hidden;
-      padding-bottom: 80px; /* Aumentar o padding inferior para garantir espaço para o botão */
+      padding: 20px;
+      box-sizing: border-box;
+    }
+    
+    .netflix-content-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      max-width: 800px;
     }
     
     .netflix-who-watching {
@@ -63,7 +72,7 @@
       align-items: center;
       flex-wrap: wrap;
       gap: 2vw;
-      margin-bottom: 40px; /* Garantir espaço entre perfis e botão */
+      margin-bottom: 8vh; /* Espaço adicional antes do botão */
     }
     
     .netflix-profile {
@@ -169,8 +178,15 @@
     }
     
     @media (max-width: 768px) {
-      .netflix-who-watching {
+      .netflix-profiles {
+        padding-top: 10vh; /* Empurrar todo o conteúdo para cima */
+        justify-content: flex-start; /* Alinhar no topo em vez de centro */
+      }
+      
+      .netflix-content-wrapper {
         font-size: 32px;
+        margin-top: 5vh; /* Adicionar espaço no topo */
+        margin-bottom: 5vh;
       }
       
       .netflix-profile-name,
@@ -187,19 +203,30 @@
       .netflix-skip-button {
         font-size: 16px;
         padding: 8px 16px;
-        bottom: 8vh; /* Ajustar posição em dispositivos médios */
+        position: relative; /* Remover posicionamento absoluto */
+        bottom: auto;
+        margin-top: 5vh; /* Adicionar margem em vez de posição absoluta */
+      }
+      
+      .netflix-profiles-list {
+        margin-bottom: 3vh;
       }
     }
     
     @media (max-width: 480px) {
-      .netflix-who-watching {
+      .netflix-profiles {
+        padding-top: 8vh;
+      }
+      
+      .netflix-content-wrapper {
         font-size: 28px;
-        margin-bottom: 5vh;
+        margin-top: 0;
+        margin-bottom: 4vh;
       }
       
       .netflix-profiles-list {
         flex-wrap: wrap;
-        margin-bottom: 60px; /* Aumentar espaço entre perfis e botão em dispositivos pequenos */
+        margin-bottom: 2vh;
       }
       
       .netflix-profile,
@@ -210,17 +237,15 @@
       
       .netflix-profile-name,
       .netflix-add-profile-name {
-        font-size: 16px;
+        font-size: 20px;
         margin-top: 10px;
       }
       
       .netflix-skip-button {
-        font-size: 16px;
-        bottom: 5vh; /* Ajustar posição em dispositivos pequenos */
-        width: 80%; /* Tornar o botão mais largo para facilitar o toque */
-        text-align: center;
-        position: relative; /* Mudar de posição absoluta para relativa */
-        margin-top: 30px; /* Adicionar margem superior */
+        font-size: 18px;
+        position: relative;
+        bottom: auto;
+        margin-top: 3vh;
       }
       
       .banner-content h1 {
@@ -486,19 +511,20 @@
 <body>
   <!-- Tela de seleção de perfil da Netflix -->
   <div id="netflix-profiles" class="netflix-profiles">
-    <div class="netflix-who-watching">Quem está assistindo?</div>
-    
-    <div class="netflix-profiles-list">
-      <div class="netflix-profile" onclick="iniciar()">
-        <div class="netflix-profile-avatar">
-          <img src="assets/foto7.jpg" alt="Perfil Leticia">
+    <div class="netflix-content-wrapper">
+      <div class="netflix-who-watching">Quem está assistindo?</div>
+      
+      <div class="netflix-profiles-list">
+        <div class="netflix-profile" onclick="iniciar()">
+          <div class="netflix-profile-avatar">
+            <img src="assets/foto7.jpg" alt="Perfil Leticia">
+          </div>
+          <div class="netflix-profile-name">Leticia</div>
         </div>
-        <div class="netflix-profile-name">Leticia</div>
       </div>
+      
+      <button class="netflix-skip-button" onclick="skipToMain()">Ir para Filme</button>
     </div>
-    
-    <!-- Em telas menores, o botão fica dentro do container de perfis -->
-    <button class="netflix-skip-button" onclick="skipToMain()">Ir para Filme</button>
   </div>
 
   <div id="start-screen" class="start-screen" style="display:none;">
