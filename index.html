@@ -374,14 +374,14 @@
 
   <header>
     <div class="logo">NETFLIX</div>
-    <nav>
+    <!-- <nav>
       <ul>
         <li><a href="#">Início</a></li>
         <li><a href="#">Séries</a></li>
         <li><a href="#">Filmes</a></li>
         <li><a href="#">Minha Lista</a></li>
       </ul>
-    </nav>
+    </nav> -->
   </header>
 
   <div id="video-modal" class="hidden fixed inset-0 z-50 bg-black bg-opacity-95 flex items-center justify-center">
@@ -420,7 +420,7 @@
         </div>
         <!-- <p>Juntos desde 2025 💕</p> -->
         <p class="days-together">Estreou há <span id="days-counter">0</span> Dias 💕</p>
-        <p class="tagline">" Em um mundo obcecado por finais felizes, escolhemos viver um amor sem ponto final. Cada olhar, silêncio e risada vira cena perfeita, onde o tempo é cúmplice e os gestos simples ganham close-ups. Sem cortes, sem edições, cada 'eu te amo' é um diálogo digno de replay. Porque aqui, o amor é vivido em tempo real. A cada dia, um novo capítulo."
+        <p class="tagline">" Em um mundo obcecado por finais felizes, escolhemos viver um amor sem ponto final. Cada olhar, cada silêncio e risada vira cena perfeita, onde o tempo é cúmplice e os gestos simples se tornam atores principais. Sem cortes, sem edições, cada 'eu te amo' é um diálogo digno de replay. O amor deles é vivido em tempo real. E a cada dia, um novo capítulo é feito."
         </p>
         <div class="buttons">
           <button class="btn-play">▶ Assistir</button>
@@ -470,7 +470,7 @@
           <div class="video-icon">▶</div>
           <div class="video-duration">0:30</div>
         </div>
-        <div class="video-item" onclick="openMediaModal('assets/video3.mp4', 'Mais momentos inesquecíveis', 'video')">
+        <div class="video-item" onclick="openMediaModal('assets/video3.mp4', '', 'video')">
           <div class="video-preview-container">
             <video class="video-preview" muted loop playsinline>
               <source src="assets/video3.mp4" type="video/mp4">
@@ -480,7 +480,7 @@
           <div class="video-icon">▶</div>
           <div class="video-duration">0:30</div>
         </div>
-        <div class="gallery-item" onclick="openMediaModal('assets/foto3.jpeg', 'Mais um momento especial', 'image')">
+        <div class="gallery-item" onclick="openMediaModal('assets/foto3.jpeg', '', 'image')">
           <img src="assets/foto3.jpeg" alt="Momento 9">
         </div>
       </div>

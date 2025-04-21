@@ -122,7 +122,7 @@ body {
 /* ===== HEADER ===== */
 header {
   display: none;
-  justify-content: space-between;
+  justify-content:center;
   align-items: center;
   padding: 15px 20px;
   background-color: rgba(0, 0, 0, 0.8);
@@ -1087,7 +1087,7 @@ main.show {
   header {
     padding: 12px 15px;
     flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
   }
   
   nav ul {

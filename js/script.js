@@ -45,15 +45,15 @@ let currentBgMusicIndex = 0;
 // Variáveis para o modal de mídia
 let currentMediaIndex = 0;
 const galleryMedia = [
-  { src: "assets/foto1.jpg", caption: "Nosso primeiro encontro", type: "image" },
-  { src: "assets/foto2.jpeg", caption: "Nosso passeio especial", type: "image" },
-  { src: "assets/foto4.jpg", caption: "Momentos que ficam na memória", type: "image" },
-  { src: "assets/foto5.jpg", caption: "Cada dia é especial ao seu lado", type: "image" },
-  { src: "assets/foto6.jpg", caption: "Nossa conexão é única", type: "image" },
-  { src: "assets/foto7.jpg", caption: "Amor que transborda", type: "image" },
-  { src: "assets/video2.mp4", caption: "Nosso vídeo especial", type: "video" },
-  { src: "assets/video3.mp4", caption: "Mais momentos inesquecíveis", type: "video" },
-  { src: "assets/foto3.jpeg", caption: "Mais um momento especial", type: "image" }
+  { src: "assets/foto1.jpg", caption: "", type: "image" },
+  { src: "assets/foto2.jpeg", caption: "", type: "image" },
+  { src: "assets/foto4.jpg", caption: "", type: "image" },
+  { src: "assets/foto5.jpg", caption: "", type: "image" },
+  { src: "assets/foto6.jpg", caption: "", type: "image" },
+  { src: "assets/foto7.jpg", caption: "", type: "image" },
+  { src: "assets/video2.mp4", caption: "", type: "video" },
+  { src: "assets/video3.mp4", caption: "", type: "video" },
+  { src: "assets/foto3.jpeg", caption: "", type: "image" }
 ];
 
 // Variáveis para o carrossel da galeria
