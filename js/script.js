@@ -63,7 +63,7 @@ let galleryIndex = 0;
 const texts = [
   "No instante em que nossos olhos se encontraram pela primeira vez...",  // 0
   "Eu senti que o universo conspirava para nos unir", // 1
-  "Seu sorriso ilumina meu mundo de uma forma que nunca imaginei possível", // 2
+  "Seu sorriso é capaz de iluminar meu mundo ", // 2
   "E desde então, cada momento compartilhado ao seu lado é único  ", // 3
   "Essas músicas são a trilha sonora da nossa história", // 4
   "Cada melodia guarda um pedaço do nosso amor", // 5
@@ -87,9 +87,9 @@ const textDurations = [
   5000,  // Texto 3: "E desde então, cada momento ao seu lado tem sido unicos"
   5000,  // Texto 4: "Essas músicas são a trilha sonora da nossa história"
   5000,  // Texto 5: "Cada melodia guarda um pedaço do nosso amor"
-  12000,  // Texto 6: "Lembra quando ouvimos 'I Wanna Be Yours'..."
-  7000,  // Texto 7: "Ou quando 'Monde Nouveau' tocou..."
-  7000,  // Texto 8: ""
+  11000,  // Texto 6: "Lembra quando ouvimos 'I Wanna Be Yours'..."
+  8000,  // Texto 7: "Ou quando 'Monde Nouveau' tocou..."
+  8000,  // Texto 8: ""
   5000,  // Texto 9: "São nessas pequenas lembranças que nosso amor se fortalece"
   5000,  // Texto 10: "E mesmo quando as notas terminam, nosso amor continua ecoando"
   5000,  // Texto 11: "Você é a melodia que embala meus dias e acalenta minhas noites"
@@ -1301,7 +1301,7 @@ function gerarEstrelas(container) {
   // Se não especificar um container, usa a tela inicial
   container = container || document.getElementById("start-screen");
   
-  const numStars = 350;
+  const numStars = 500;
   
   // Limpa estrelas existentes no container
   const existingStars = container.querySelectorAll('.star');
@@ -1313,7 +1313,7 @@ function gerarEstrelas(container) {
     star.classList.add("star");
     
     // Tamanho aleatório
-    let size = Math.random() * 3 + 1;
+    let size = Math.random() * 4 + 1;
     star.style.width = `${size}px`;
     star.style.height = `${size}px`;
     
@@ -2202,7 +2202,7 @@ function fadeToSong(songIndex) {
         playPromise.then(() => {
           // Só podemos definir currentTime após um play bem-sucedido em mobile
           setTimeout(() => {
-            audio.currentTime = 55;
+            audio.currentTime = 34;
             console.log("Música 2 iniciada em 16s (dispositivo móvel)");
             
             // Restaurar volume (apenas Android)
