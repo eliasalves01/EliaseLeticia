@@ -1516,6 +1516,31 @@ function openMediaModal(mediaSrc, caption, type) {
       mediaModal.classList.add('hidden');
     }
   });
+  
+  // Adicionar suporte a gestos de swipe para navegação em dispositivos móveis
+  let touchStartX = 0;
+  let touchEndX = 0;
+  
+  mediaModal.addEventListener('touchstart', (e) => {
+    touchStartX = e.changedTouches[0].screenX;
+  }, { passive: true });
+  
+  mediaModal.addEventListener('touchend', (e) => {
+    touchEndX = e.changedTouches[0].screenX;
+    handleSwipeForMedia();
+  }, { passive: true });
+  
+  function handleSwipeForMedia() {
+    const threshold = 100; // Mínimo de pixels para contar como swipe
+    
+    if (touchEndX - touchStartX > threshold) {
+      // Swipe para a direita - imagem anterior
+      navigateMedia('prev');
+    } else if (touchStartX - touchEndX > threshold) {
+      // Swipe para a esquerda - próxima imagem
+      navigateMedia('next');
+    }
+  }
 }
 
 // Função para navegar entre as mídias

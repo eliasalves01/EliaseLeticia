@@ -1445,6 +1445,9 @@ main.show {
   justify-content: center;
   align-items: center;
   padding: 20px;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
 }
 
 #media-container img,
@@ -1455,6 +1458,7 @@ main.show {
   object-fit: contain;
   border-radius: 8px;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+  touch-action: pan-x pan-y;
 }
 
 #close-media-modal {
@@ -1523,29 +1527,43 @@ main.show {
   background-color: rgba(0, 0, 0, 0.5);
 }
 
-/* Responsividade para galeria e modal */
+/* Touch indicator para dispositivos móveis */
+.touch-indicator {
+  position: absolute;
+  width: 100%;
+  bottom: 60px;
+  text-align: center;
+  color: rgba(255,255,255,0.7);
+  font-size: 14px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.swipe-indicator-dots {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.swipe-indicator-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: rgba(255,255,255,0.4);
+}
+
+.swipe-indicator-dot.active {
+  background-color: rgba(229, 9, 20, 0.9);
+  transform: scale(1.2);
+}
+
 @media (max-width: 768px) {
-  .gallery {
-    display: flex;
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    scroll-behavior: smooth;
-    -webkit-overflow-scrolling: touch;
-    padding: 10px 0;
-    gap: 15px;
-  }
-  
-  .gallery-item, .video-item {
-    flex: 0 0 auto;
-    width: 85%;
-    margin-right: 0;
-    scroll-snap-align: center;
-    aspect-ratio: 1/1;
-  }
-  
-  .moments {
-    padding: 30px 20px;
+  #media-container img,
+  #media-container video {
+    max-width: 100%;
+    object-fit: contain;
   }
   
   #close-media-modal {
@@ -1556,23 +1574,25 @@ main.show {
     font-size: 18px;
   }
   
+  /* Ocultar setas de navegação em dispositivos móveis */
   .media-nav {
-    width: 40px;
-    height: 40px;
-    font-size: 24px;
+    display: none;
   }
   
-  .media-nav.prev {
-    left: 10px;
+  /* Adicionar instrução para arrastar em dispositivos móveis */
+  .touch-indicator {
+    opacity: 1;
+    animation: pulse-opacity 2s infinite alternate;
   }
   
-  .media-nav.next {
-    right: 10px;
+  @keyframes pulse-opacity {
+    0% { opacity: 0.5; }
+    100% { opacity: 0.9; }
   }
   
-  #media-caption {
-    bottom: 10px;
-    font-size: 14px;
+  /* Aprimorar resposta ao toque */
+  #media-modal {
+    touch-action: pan-x;
   }
 }
 
