@@ -45,6 +45,7 @@
       justify-content: center;
       align-items: center;
       overflow: hidden;
+      padding-bottom: 80px; /* Aumentar o padding inferior para garantir espaço para o botão */
     }
     
     .netflix-who-watching {
@@ -62,6 +63,7 @@
       align-items: center;
       flex-wrap: wrap;
       gap: 2vw;
+      margin-bottom: 40px; /* Garantir espaço entre perfis e botão */
     }
     
     .netflix-profile {
@@ -185,6 +187,7 @@
       .netflix-skip-button {
         font-size: 16px;
         padding: 8px 16px;
+        bottom: 8vh; /* Ajustar posição em dispositivos médios */
       }
     }
     
@@ -196,6 +199,7 @@
       
       .netflix-profiles-list {
         flex-wrap: wrap;
+        margin-bottom: 60px; /* Aumentar espaço entre perfis e botão em dispositivos pequenos */
       }
       
       .netflix-profile,
@@ -206,13 +210,17 @@
       
       .netflix-profile-name,
       .netflix-add-profile-name {
-        font-size: 20px;
+        font-size: 16px;
         margin-top: 10px;
       }
       
       .netflix-skip-button {
-        font-size: 18px;
-        bottom: 5vh;
+        font-size: 16px;
+        bottom: 5vh; /* Ajustar posição em dispositivos pequenos */
+        width: 80%; /* Tornar o botão mais largo para facilitar o toque */
+        text-align: center;
+        position: relative; /* Mudar de posição absoluta para relativa */
+        margin-top: 30px; /* Adicionar margem superior */
       }
       
       .banner-content h1 {
@@ -487,10 +495,9 @@
         </div>
         <div class="netflix-profile-name">Leticia</div>
       </div>
-      
-
     </div>
     
+    <!-- Em telas menores, o botão fica dentro do container de perfis -->
     <button class="netflix-skip-button" onclick="skipToMain()">Ir para Filme</button>
   </div>
 
