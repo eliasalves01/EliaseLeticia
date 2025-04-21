@@ -1436,92 +1436,143 @@ function openMediaModal(mediaSrc, caption, type) {
   const mediaModal = document.getElementById('media-modal');
   const mediaContainer = document.getElementById('media-container');
   const mediaCaption = document.getElementById('media-caption');
-  const bgMusic = document.getElementById('bg-music');
   
-  // Se não encontrar os elementos, encerrar
-  if (!mediaModal || !mediaContainer || !mediaCaption) {
+  if (!mediaModal || !mediaContainer) {
     console.error('Elementos do modal não encontrados');
     return;
   }
   
-  // Limpar conteúdo anterior
+  // Limpar o conteúdo anterior
   mediaContainer.innerHTML = '';
   
-  // Encontrar o índice no array de mídia
-  currentMediaIndex = galleryMedia.findIndex(item => item.src === mediaSrc);
-  if (currentMediaIndex === -1) {
-    // Se não encontrado no array, usar os parâmetros fornecidos
-    currentMediaIndex = 0; // Definir como 0 por segurança
-    
-    console.log(`Mídia não encontrada no array, usando parâmetros: ${mediaSrc}, ${caption}, ${type}`);
+  // Criar o elemento adequado baseado no tipo
+  let mediaElement;
+  
+  if (type === 'image') {
+    mediaElement = document.createElement('img');
+    mediaElement.src = mediaSrc;
+    mediaElement.alt = caption || 'Imagem ampliada';
+    mediaElement.style.maxHeight = '85vh';
+    mediaElement.style.width = 'auto';
+    mediaElement.style.maxWidth = '90%';
+    mediaElement.style.objectFit = 'contain';
+  } else if (type === 'video') {
+    mediaElement = document.createElement('video');
+    mediaElement.src = mediaSrc;
+    mediaElement.controls = true;
+    mediaElement.autoplay = true;
+    mediaElement.controlsList = 'nodownload';
+    mediaElement.style.maxHeight = '85vh';
+    mediaElement.style.width = 'auto';
+    mediaElement.style.maxWidth = '90%';
+    mediaElement.style.objectFit = 'contain';
   }
   
-  // Criar e adicionar o elemento apropriado
-  if (type === 'video') {
-    // Pausar música de fundo ao reproduzir vídeo
-    if (bgMusic && !bgMusic.paused) {
-      bgMusic.pause();
+  // Adicionar o elemento ao container
+  if (mediaElement) {
+    mediaContainer.appendChild(mediaElement);
+  }
+  
+  // Atualizar a legenda
+  if (mediaCaption) {
+    mediaCaption.textContent = caption || '';
+    mediaCaption.style.display = caption ? 'block' : 'none';
+  }
+  
+  // Atualizar o índice atual na galeria
+  for (let i = 0; i < galleryMedia.length; i++) {
+    if (galleryMedia[i].src === mediaSrc) {
+      currentMediaIndex = i;
+      break;
     }
-    
-    const video = document.createElement('video');
-    video.className = 'max-w-full max-h-[80vh] rounded-lg';
-    video.controls = true;
-    video.src = mediaSrc;
-    video.autoplay = true;
-    mediaContainer.appendChild(video);
-  } else {
-    const img = document.createElement('img');
-    img.className = 'max-w-full max-h-[80vh] rounded-lg';
-    img.src = mediaSrc;
-    img.alt = caption;
-    mediaContainer.appendChild(img);
   }
   
-  // Definir legenda
-  mediaCaption.textContent = caption;
-  
-  // Mostrar o modal
+  // Exibir o modal
   mediaModal.classList.remove('hidden');
-  document.body.style.overflow = 'hidden'; // Evitar rolagem no fundo
   
-  // Verificar e mostrar/ocultar botões de navegação
-  const prevButton = document.querySelector('.media-nav.prev');
-  const nextButton = document.querySelector('.media-nav.next');
-  
-  if (prevButton && nextButton) {
-    if (galleryMedia.length <= 1) {
-      prevButton.classList.add('hidden');
-      nextButton.classList.add('hidden');
-    } else {
-      prevButton.classList.remove('hidden');
-      nextButton.classList.remove('hidden');
+  // Adicionar eventos aos botões de navegação e fechar
+  document.querySelector('.media-nav.prev').onclick = () => navigateMedia('prev');
+  document.querySelector('.media-nav.next').onclick = () => navigateMedia('next');
+  document.getElementById('close-media-modal').onclick = () => {
+    // Pausar vídeo se estiver sendo exibido
+    if (type === 'video') {
+      const videoElement = mediaContainer.querySelector('video');
+      if (videoElement) {
+        videoElement.pause();
+      }
     }
-  }
+    mediaModal.classList.add('hidden');
+  };
+  
+  // Fechar ao clicar fora da mídia
+  mediaModal.addEventListener('click', (e) => {
+    if (e.target === mediaModal) {
+      if (type === 'video') {
+        const videoElement = mediaContainer.querySelector('video');
+        if (videoElement) {
+          videoElement.pause();
+        }
+      }
+      mediaModal.classList.add('hidden');
+    }
+  });
 }
 
 // Função para navegar entre as mídias
 function navigateMedia(direction) {
-  // Garantir que temos a lista de mídia e o índice atual
-  if (!galleryMedia || galleryMedia.length === 0) {
-    console.error('Array de mídia não disponível ou vazio');
+  const mediaContainer = document.getElementById('media-container');
+  const mediaCaption = document.getElementById('media-caption');
+  
+  if (!mediaContainer || galleryMedia.length === 0) {
     return;
   }
   
-  // Pausar qualquer mídia atual (especialmente vídeos)
-  pauseCurrentMedia();
-  
-  // Calcular o novo índice
+  // Atualizar o índice atual
   if (direction === 'prev') {
     currentMediaIndex = (currentMediaIndex - 1 + galleryMedia.length) % galleryMedia.length;
   } else {
     currentMediaIndex = (currentMediaIndex + 1) % galleryMedia.length;
   }
   
-  // Obter a mídia correspondente
-  const media = galleryMedia[currentMediaIndex];
+  const currentMedia = galleryMedia[currentMediaIndex];
   
-  // Abrir a mídia
-  openMediaModal(media.src, media.caption, media.type);
+  // Pausar vídeo atual caso esteja sendo exibido
+  const currentVideo = mediaContainer.querySelector('video');
+  if (currentVideo) {
+    currentVideo.pause();
+  }
+  
+  // Limpar o container
+  mediaContainer.innerHTML = '';
+  
+  // Criar e adicionar o novo elemento
+  if (currentMedia.type === 'video') {
+    const video = document.createElement('video');
+    video.src = currentMedia.src;
+    video.controls = true;
+    video.autoplay = true;
+    video.controlsList = 'nodownload';
+    video.style.maxHeight = '85vh';
+    video.style.width = 'auto';
+    video.style.maxWidth = '90%';
+    video.style.objectFit = 'contain';
+    mediaContainer.appendChild(video);
+  } else {
+    const img = document.createElement('img');
+    img.src = currentMedia.src;
+    img.alt = currentMedia.caption || 'Imagem ampliada';
+    img.style.maxHeight = '85vh';
+    img.style.width = 'auto';
+    img.style.maxWidth = '90%';
+    img.style.objectFit = 'contain';
+    mediaContainer.appendChild(img);
+  }
+  
+  // Atualizar a legenda
+  if (mediaCaption) {
+    mediaCaption.textContent = currentMedia.caption || '';
+    mediaCaption.style.display = currentMedia.caption ? 'block' : 'none';
+  }
 }
 
 // Função para atualizar o display do carrossel
@@ -1771,7 +1822,7 @@ function updateDaysCounter() {
   if (!daysCounter) return;
   
   // Definir a data de início do relacionamento
-  const dataInicio = new Date(2025, 1, 22); // 22/02/2025
+  const dataInicio = new Date(2025, 1, 21); // 22/02/2025
   const dataAtual = new Date();
   
   // Se estamos antes da data real de início, mostrar exatamente 60 dias

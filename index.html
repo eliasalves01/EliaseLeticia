@@ -37,7 +37,8 @@
       font-size: 3.5vw;
       font-weight: 700;
       color: #fff;
-      margin-bottom: 4vh;
+      margin-bottom: 6vh;
+      margin-top: -10vh;
     }
     
     .netflix-profiles-list {
@@ -46,6 +47,7 @@
       align-items: center;
       flex-wrap: wrap;
       gap: 2vw;
+      margin-bottom: 8vh;
     }
     
     .netflix-profile {
@@ -133,26 +135,32 @@
     }
     
     .netflix-skip-button {
-      position: absolute;
-      bottom: 20vh;
-      padding: 10px 20px;
-      background-color: rgba(255, 255, 255, 0.2);
+      position: relative;
+      padding: 12px 30px;
+      background-color: rgba(255, 255, 255, 0.3);
       color: white;
       border: none;
       border-radius: 4px;
       font-family: 'Montserrat', sans-serif;
-      font-size: 1.2vw;
+      font-size: 1.4vw;
       cursor: pointer;
       transition: all 0.3s ease;
+      text-align: center;
+      font-weight: 500;
+      min-width: 180px;
+      letter-spacing: 0.5px;
+      margin-top: 10vh;
     }
     
     .netflix-skip-button:hover {
-      background-color: rgba(255, 255, 255, 0.3);
+      background-color: rgba(255, 255, 255, 0.4);
+      transform: scale(1.05);
     }
     
     @media (max-width: 768px) {
       .netflix-who-watching {
         font-size: 32px;
+        margin-top: -8vh;
       }
       
       .netflix-profile-name,
@@ -168,7 +176,9 @@
       
       .netflix-skip-button {
         font-size: 16px;
-        padding: 8px 16px;
+        padding: 10px 24px;
+        min-width: 160px;
+        margin-top: 8vh;
       }
     }
     
@@ -176,10 +186,11 @@
       .netflix-who-watching {
         font-size: 28px;
         margin-bottom: 5vh;
+        margin-top: -5vh;
       }
       
       .netflix-profiles-list {
-        flex-wrap: wrap;
+        margin-bottom: 6vh;
       }
       
       .netflix-profile,
@@ -196,6 +207,9 @@
       
       .netflix-skip-button {
         font-size: 18px;
+        padding: 12px 20px;
+        min-width: 170px;
+        margin-top: 6vh;
       }
       
       .banner-content h1 {
@@ -492,16 +506,14 @@
 
   <!-- Modal para imagens e vídeos -->
   <div id="media-modal" class="hidden fixed inset-0 z-50 bg-black bg-opacity-95 flex items-center justify-center">
-    <div class="relative w-full max-w-5xl mx-auto px-4 md:px-0">
-      <button id="close-media-modal" class="absolute -top-12 right-0 text-white text-3xl bg-red-600 hover:bg-red-700 rounded-full w-10 h-10 flex items-center justify-center z-[60]">✕</button>
-      <div id="media-container" class="w-full flex justify-center rounded-lg overflow-hidden shadow-2xl">
-        <!-- O conteúdo (imagem ou vídeo) será inserido aqui via JavaScript -->
-      </div>
-      <div id="media-caption" class="text-white text-xl mt-4 text-center"></div>
-      <!-- Botões de navegação -->
-      <button class="media-nav prev absolute left-0 top-1/2 transform -translate-y-1/2 text-white text-5xl bg-black bg-opacity-40 hover:bg-opacity-60 p-3 rounded-r-lg z-50">❮</button>
-      <button class="media-nav next absolute right-0 top-1/2 transform -translate-y-1/2 text-white text-5xl bg-black bg-opacity-40 hover:bg-opacity-60 p-3 rounded-l-lg z-50">❯</button>
+    <button id="close-media-modal" class="z-[60]">✕</button>
+    <div id="media-container" class="w-full flex justify-center rounded-lg overflow-hidden shadow-2xl">
+      <!-- O conteúdo (imagem ou vídeo) será inserido aqui via JavaScript -->
     </div>
+    <div id="media-caption" class="text-white text-xl mt-4 text-center"></div>
+    <!-- Botões de navegação -->
+    <button class="media-nav prev absolute left-0 top-1/2 transform -translate-y-1/2 text-white text-5xl bg-black bg-opacity-40 hover:bg-opacity-60 p-3 rounded-r-lg z-50">❮</button>
+    <button class="media-nav next absolute right-0 top-1/2 transform -translate-y-1/2 text-white text-5xl bg-black bg-opacity-40 hover:bg-opacity-60 p-3 rounded-l-lg z-50">❯</button>
   </div>
 
   <script src="/js/script.js"></script>
