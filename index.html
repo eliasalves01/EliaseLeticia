@@ -14,22 +14,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet" />
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="/css/style.css">
-  <script src="https://www.gstatic.com/firebasejs/9.6.8/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.8/firebase-storage-compat.js"></script>
-  <script>
-    // Configuração do Firebase (substitua com suas credenciais reais quando for implementar)
-    const firebaseConfig = {
-      apiKey: "SUA_API_KEY",
-      authDomain: "seu-projeto.firebaseapp.com",
-      projectId: "seu-projeto",
-      storageBucket: "seu-projeto.appspot.com",
-      messagingSenderId: "seu-message-sender-id",
-      appId: "seu-app-id"
-    };
-    
-    // Inicializando Firebase (comentado até que você tenha suas credenciais)
-    // firebase.initializeApp(firebaseConfig);
-  </script>
   <style>
     /* Estilo para a tela de perfil da Netflix */
     .netflix-profiles {
@@ -45,16 +29,6 @@
       justify-content: center;
       align-items: center;
       overflow: hidden;
-      padding: 20px;
-      box-sizing: border-box;
-    }
-    
-    .netflix-content-wrapper {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      width: 100%;
-      max-width: 800px;
     }
     
     .netflix-who-watching {
@@ -72,7 +46,6 @@
       align-items: center;
       flex-wrap: wrap;
       gap: 2vw;
-      margin-bottom: 8vh; /* Espaço adicional antes do botão */
     }
     
     .netflix-profile {
@@ -178,18 +151,8 @@
     }
     
     @media (max-width: 768px) {
-      .netflix-profiles {
-        padding-top: 10vh; /* Empurrar todo o conteúdo para cima */
-        justify-content: flex-start; /* Alinhar no topo em vez de centro */
-      }
-      
-      .netflix-content-wrapper {
-        margin-top: 2vh;
-      }
-      
       .netflix-who-watching {
         font-size: 32px;
-        margin-bottom: 5vh;
       }
       
       .netflix-profile-name,
@@ -206,38 +169,17 @@
       .netflix-skip-button {
         font-size: 16px;
         padding: 8px 16px;
-        position: relative; /* Remover posicionamento absoluto */
-        bottom: auto;
-        margin-top: 5vh; /* Adicionar margem em vez de posição absoluta */
-      }
-      
-      .netflix-profiles-list {
-        margin-bottom: 3vh;
       }
     }
     
     @media (max-width: 480px) {
-      .netflix-profiles {
-        padding-top: 5vh;
-        justify-content: flex-start;
-      }
-      
-      .netflix-content-wrapper {
-        height: 90vh;
-        justify-content: space-between;
-        padding: 10px 0;
-        margin-top: 0;
-      }
-      
       .netflix-who-watching {
         font-size: 28px;
-        margin-top: 0;
-        margin-bottom: 3vh;
+        margin-bottom: 5vh;
       }
       
       .netflix-profiles-list {
         flex-wrap: wrap;
-        margin-bottom: 2vh;
       }
       
       .netflix-profile,
@@ -254,10 +196,7 @@
       
       .netflix-skip-button {
         font-size: 18px;
-        position: relative;
-        bottom: auto;
-        margin-top: 3vh;
-        margin-bottom: 5vh;
+        bottom: 5vh;
       }
       
       .banner-content h1 {
@@ -278,306 +217,25 @@
         height: 180px;
       }
     }
-    
-    @media (max-height: 600px) and (max-width: 480px) {
-      /* Ajustes específicos para telas muito pequenas */
-      .netflix-profiles {
-        padding-top: 2vh;
-        height: auto;
-        min-height: 100vh;
-      }
-      
-      .netflix-content-wrapper {
-        height: auto;
-        min-height: 90vh;
-      }
-      
-      .netflix-who-watching {
-        font-size: 24px;
-        margin-bottom: 2vh;
-      }
-      
-      .netflix-profile-avatar img {
-        border-radius: 10px;
-      }
-      
-      .netflix-profile, 
-      .netflix-add-profile {
-        min-width: 100px;
-      }
-      
-      .netflix-profile-name, 
-      .netflix-add-profile-name {
-        font-size: 16px;
-        margin-top: 5px;
-      }
-      
-      .netflix-skip-button {
-        margin-top: 2vh;
-        margin-bottom: 3vh;
-        padding: 6px 12px;
-        font-size: 16px;
-      }
-    }
-    
-    /* Estilo para o botão de adicionar foto */
-    .add-photo-btn {
-      position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background-color: rgba(255, 255, 255, 0.1);
-      border: 2px dashed rgba(255, 255, 255, 0.4);
-      transition: all 0.3s ease;
-      cursor: pointer;
-      min-height: 250px;
-    }
-    
-    .add-photo-btn:hover {
-      background-color: rgba(255, 255, 255, 0.2);
-      border-color: rgba(255, 255, 255, 0.7);
-    }
-    
-    .add-photo-content {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      text-align: center;
-      padding: 20px;
-    }
-    
-    .add-icon {
-      font-size: 50px;
-      font-weight: 300;
-      margin-bottom: 10px;
-      color: rgba(255, 255, 255, 0.8);
-      line-height: 1;
-    }
-    
-    .add-text {
-      font-size: 16px;
-      color: rgba(255, 255, 255, 0.8);
-    }
-    
-    .add-photo-btn:hover .add-icon,
-    .add-photo-btn:hover .add-text {
-      color: white;
-    }
-    
-    /* Torna o botão responsivo como os outros itens da galeria */
-    @media (max-width: 768px) {
-      .add-photo-btn {
-        width: 85%;
-        min-height: 220px;
-      }
-    }
-    
-    @media (max-width: 576px) {
-      .add-photo-btn {
-        width: 80%;
-        min-height: 200px;
-      }
-    }
-    
-    @media (max-width: 400px) {
-      .add-photo-btn {
-        width: 85%;
-        min-height: 160px;
-      }
-      
-      .add-icon {
-        font-size: 40px;
-      }
-      
-      .add-text {
-        font-size: 14px;
-      }
-    }
-    
-    /* Estilo para o botão de excluir foto */
-    .custom-photo {
-      position: relative;
-    }
-    
-    /* Ajustar altura das imagens na galeria */
-    .gallery-item {
-      aspect-ratio: 1/1;
-      overflow: hidden;
-    }
-    
-    .gallery-image-container {
-      width: 100%;
-      height: 100%;
-      position: relative;
-    }
-    
-    .gallery-image {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-    
-    .delete-photo {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      width: 30px;
-      height: 30px;
-      background-color: rgba(229, 9, 20, 0.8);
-      color: white;
-      border: none;
-      border-radius: 50%;
-      font-size: 20px;
-      line-height: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      z-index: 10;
-      opacity: 0;
-      transition: opacity 0.3s ease, transform 0.3s ease;
-      transform: scale(0.8);
-    }
-    
-    .custom-photo:hover .delete-photo {
-      opacity: 1;
-      transform: scale(1);
-    }
-    
-    .delete-photo:hover {
-      background-color: rgba(229, 9, 20, 1);
-      transform: scale(1.1);
-    }
-    
-    /* Botão de excluir fotos para galeria */
-    .delete-photo-btn {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      width: 30px;
-      height: 30px;
-      background-color: rgba(229, 9, 20, 0.8);
-      color: white;
-      border: none;
-      border-radius: 50%;
-      font-size: 20px;
-      line-height: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      z-index: 10;
-      transition: background-color 0.3s ease, transform 0.3s ease;
-    }
-    
-    .delete-photo-btn:hover {
-      background-color: rgba(229, 9, 20, 1);
-      transform: scale(1.1);
-    }
-    
-    /* Responsividade para os botões de excluir */
-    @media (max-width: 768px) {
-      .delete-photo, .delete-photo-btn {
-        opacity: 1; /* Sempre visível em dispositivos móveis */
-        width: 26px;
-        height: 26px;
-        font-size: 18px;
-      }
-    }
-    
-    @media (max-width: 480px) {
-      .delete-photo, .delete-photo-btn {
-        width: 24px;
-        height: 24px;
-        font-size: 16px;
-      }
-    }
-    
-    /* Modal para informar sobre o armazenamento */
-    .storage-info-modal {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100vh;
-      background-color: rgba(0, 0, 0, 0.9);
-      z-index: 9999;
-      justify-content: center;
-      align-items: center;
-    }
-    
-    .storage-info-content {
-      background-color: #1a1a1a;
-      border-radius: 8px;
-      padding: 25px;
-      max-width: 90%;
-      width: 500px;
-      color: white;
-      box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
-    }
-    
-    .storage-info-title {
-      font-size: 24px;
-      margin-bottom: 15px;
-      color: #e50914;
-    }
-    
-    .storage-info-text {
-      margin-bottom: 20px;
-      line-height: 1.5;
-    }
-    
-    .storage-info-close {
-      display: block;
-      background-color: #e50914;
-      color: white;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 5px;
-      margin: 0 auto;
-      cursor: pointer;
-      font-size: 16px;
-      transition: background-color 0.3s;
-    }
-    
-    .storage-info-close:hover {
-      background-color: #ff0a16;
-    }
-    
-    /* Alerta de armazenamento acima do botão de adicionar */
-    .storage-warning {
-      position: absolute;
-      bottom: 5px;
-      width: 100%;
-      text-align: center;
-      font-size: 12px;
-      color: rgba(255, 255, 255, 0.7);
-      background-color: rgba(0, 0, 0, 0.5);
-      padding: 2px 0;
-      cursor: pointer;
-    }
   </style>
 </head>
 <body>
   <!-- Tela de seleção de perfil da Netflix -->
   <div id="netflix-profiles" class="netflix-profiles">
-    <div class="netflix-content-wrapper">
-      <div class="netflix-who-watching">Quem está assistindo?</div>
-      
-      <div class="netflix-profiles-list">
-        <div class="netflix-profile" onclick="iniciar()">
-          <div class="netflix-profile-avatar">
-            <img src="assets/foto7.jpg" alt="Perfil Leticia">
-          </div>
-          <div class="netflix-profile-name">Leticia</div>
+    <div class="netflix-who-watching">Quem está assistindo?</div>
+    
+    <div class="netflix-profiles-list">
+      <div class="netflix-profile" onclick="iniciar()">
+        <div class="netflix-profile-avatar">
+          <img src="assets/foto7.jpg" alt="Perfil Leticia">
         </div>
+        <div class="netflix-profile-name">Leticia</div>
       </div>
       
-      <button class="netflix-skip-button" onclick="skipToMain()">Ir para Filme</button>
+
     </div>
+    
+    <button class="netflix-skip-button" onclick="skipToMain()">Ir para Filme</button>
   </div>
 
   <div id="start-screen" class="start-screen" style="display:none;">
@@ -770,74 +428,65 @@
 
     <section class="moments">
       <h2>Momentos Inesquecíveis</h2>
-      <div class="gallery-container">
-        <div class="gallery">
-          <div class="gallery-item" onclick="openMediaModal('assets/foto1.jpg', '', 'image')">
-            <img src="assets/foto1.jpg" alt="Momento 1">
-          </div>
-          <div class="gallery-item" onclick="openMediaModal('assets/foto2.jpeg', '', 'image')">
-            <img src="assets/foto2.jpeg" alt="Momento 2">
-          </div>
-          <div class="gallery-item" onclick="openMediaModal('assets/foto4.jpg', '', 'image')">
-            <img src="assets/foto4.jpg" alt="Momento 3">
-          </div>
-          <div class="gallery-item" onclick="openMediaModal('assets/foto5.jpg', '', 'image')">
-            <img src="assets/foto5.jpg" alt="Momento 4">
-          </div>
-          <div class="gallery-item" onclick="openMediaModal('assets/foto6.jpg', '', 'image')">
-            <img src="assets/foto6.jpg" alt="Momento 5">
-          </div>
-          <div class="gallery-item" onclick="openMediaModal('assets/foto7.jpg', '' , 'image')">
-            <img src="assets/foto7.jpg" alt="Momento 6">
-          </div>
-          <div class="video-item" onclick="openMediaModal('assets/video2.mp4', '', 'video')">
-            <div class="video-preview-container">
-              <video class="video-preview" muted loop playsinline>
-                <source src="assets/video2.mp4" type="video/mp4">
-              </video>
-              <div class="video-preview-overlay"></div>
-            </div>
-            <div class="video-icon">▶</div>
-            <div class="video-duration">0:30</div>
-          </div>
-          <div class="video-item" onclick="openMediaModal('assets/video3.mp4', 'Mais momentos inesquecíveis', 'video')">
-            <div class="video-preview-container">
-              <video class="video-preview" muted loop playsinline>
-                <source src="assets/video3.mp4" type="video/mp4">
-              </video>
-              <div class="video-preview-overlay"></div>
-            </div>
-            <div class="video-icon">▶</div>
-            <div class="video-duration">0:30</div>
-          </div>
-          <div class="gallery-item" onclick="openMediaModal('assets/foto3.jpeg', 'Mais um momento especial', 'image')">
-            <img src="assets/foto3.jpeg" alt="Momento 9">
-          </div>
-          <!-- Botão para adicionar novas fotos -->
-          <div class="gallery-item add-photo-btn" onclick="uploadNewPhoto()">
-            <div class="add-photo-content">
-              <div class="add-icon">+</div>
-              <div class="add-text">Adicionar foto</div>
-            </div>
-          </div>
+      <div class="gallery">
+        <div class="gallery-item" onclick="openMediaModal('assets/foto1.jpg', '', 'image')">
+          <img src="assets/foto1.jpg" alt="Momento 1">
         </div>
-        <!-- Indicadores de paginação para mobile -->
-        <div class="gallery-pagination">
-          <div class="gallery-pagination-dot active" data-index="0"></div>
-          <div class="gallery-pagination-dot" data-index="1"></div>
-          <div class="gallery-pagination-dot" data-index="2"></div>
-          <div class="gallery-pagination-dot" data-index="3"></div>
-          <div class="gallery-pagination-dot" data-index="4"></div>
-          <div class="gallery-pagination-dot" data-index="5"></div>
-          <div class="gallery-pagination-dot" data-index="6"></div>
-          <div class="gallery-pagination-dot" data-index="7"></div>
-          <div class="gallery-pagination-dot" data-index="8"></div>
+        <div class="gallery-item" onclick="openMediaModal('assets/foto2.jpeg', '', 'image')">
+          <img src="assets/foto2.jpeg" alt="Momento 2">
         </div>
-        <!-- Indicador de swipe para mobile -->
-        <div class="gallery-swipe-indicator">
-          <span>Deslize para ver mais</span>
-          <span class="gallery-swipe-icon">→</span>
+        <div class="gallery-item" onclick="openMediaModal('assets/foto4.jpg', '', 'image')">
+          <img src="assets/foto4.jpg" alt="Momento 3">
         </div>
+        <div class="gallery-item" onclick="openMediaModal('assets/foto5.jpg', '', 'image')">
+          <img src="assets/foto5.jpg" alt="Momento 4">
+        </div>
+        <div class="gallery-item" onclick="openMediaModal('assets/foto6.jpg', '', 'image')">
+          <img src="assets/foto6.jpg" alt="Momento 5">
+        </div>
+        <div class="gallery-item" onclick="openMediaModal('assets/foto7.jpg', '' , 'image')">
+          <img src="assets/foto7.jpg" alt="Momento 6">
+        </div>
+        <div class="video-item" onclick="openMediaModal('assets/video2.mp4', '', 'video')">
+          <div class="video-preview-container">
+            <video class="video-preview" muted loop playsinline>
+              <source src="assets/video2.mp4" type="video/mp4">
+            </video>
+            <div class="video-preview-overlay"></div>
+          </div>
+          <div class="video-icon">▶</div>
+          <div class="video-duration">0:30</div>
+        </div>
+        <div class="video-item" onclick="openMediaModal('assets/video3.mp4', 'Mais momentos inesquecíveis', 'video')">
+          <div class="video-preview-container">
+            <video class="video-preview" muted loop playsinline>
+              <source src="assets/video3.mp4" type="video/mp4">
+            </video>
+            <div class="video-preview-overlay"></div>
+          </div>
+          <div class="video-icon">▶</div>
+          <div class="video-duration">0:30</div>
+        </div>
+        <div class="gallery-item" onclick="openMediaModal('assets/foto3.jpeg', 'Mais um momento especial', 'image')">
+          <img src="assets/foto3.jpeg" alt="Momento 9">
+        </div>
+      </div>
+      <!-- Indicadores de paginação para mobile -->
+      <div class="gallery-pagination">
+        <div class="gallery-pagination-dot active" data-index="0"></div>
+        <div class="gallery-pagination-dot" data-index="1"></div>
+        <div class="gallery-pagination-dot" data-index="2"></div>
+        <div class="gallery-pagination-dot" data-index="3"></div>
+        <div class="gallery-pagination-dot" data-index="4"></div>
+        <div class="gallery-pagination-dot" data-index="5"></div>
+        <div class="gallery-pagination-dot" data-index="6"></div>
+        <div class="gallery-pagination-dot" data-index="7"></div>
+        <div class="gallery-pagination-dot" data-index="8"></div>
+      </div>
+      <!-- Indicador de swipe para mobile -->
+      <div class="gallery-swipe-indicator">
+        <span>Deslize para ver mais</span>
+        <span class="gallery-swipe-icon">→</span>
       </div>
     </section>
   </main>
@@ -853,30 +502,6 @@
       <!-- Botões de navegação -->
       <button class="media-nav prev absolute left-0 top-1/2 transform -translate-y-1/2 text-white text-5xl bg-black bg-opacity-40 hover:bg-opacity-60 p-3 rounded-r-lg z-50">❮</button>
       <button class="media-nav next absolute right-0 top-1/2 transform -translate-y-1/2 text-white text-5xl bg-black bg-opacity-40 hover:bg-opacity-60 p-3 rounded-l-lg z-50">❯</button>
-    </div>
-  </div>
-
-  <!-- Input de arquivo oculto para seleção de fotos -->
-  <input type="file" id="photo-upload" accept="image/*" style="display: none;">
-
-  <div class="storage-info-modal" id="storage-info-modal">
-    <div class="storage-info-content">
-      <h3 class="storage-info-title">Sobre o armazenamento de fotos</h3>
-      <p class="storage-info-text">
-        As fotos que você adicionar são armazenadas localmente no seu navegador usando localStorage. 
-        Isso significa que:
-      </p>
-      <ul class="storage-info-text">
-        <li>As fotos só ficam visíveis neste dispositivo</li>
-        <li>Se você limpar os dados do navegador, as fotos serão perdidas</li>
-        <li>O armazenamento é limitado a aproximadamente 5MB por domínio</li>
-        <li>Fotos muito grandes podem não ser armazenadas corretamente</li>
-      </ul>
-      <p class="storage-info-text">
-        Para uma solução permanente, seria necessário implementar um sistema de 
-        armazenamento em nuvem como Firebase Storage ou AWS S3.
-      </p>
-      <button class="storage-info-close" id="storage-info-close">Entendi</button>
     </div>
   </div>
 
