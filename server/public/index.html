@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Teste de Upload de Imagens</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #141414;
+      color: white;
+    }
+    h1 {
+      color: #e50914;
+      text-align: center;
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    label {
+      display: block;
+      margin-bottom: 8px;
+    }
+    input[type="file"] {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      background-color: #333;
+      color: white;
+    }
+    button {
+      background-color: #e50914;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    button:hover {
+      background-color: #f40612;
+    }
+    .images-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 15px;
+      margin-top: 30px;
+    }
+    .image-card {
+      border: 1px solid #333;
+      border-radius: 8px;
+      overflow: hidden;
+      position: relative;
+    }
+    .image-card img {
+      width: 100%;
+      aspect-ratio: 1/1;
+      object-fit: cover;
+      display: block;
+    }
+    .image-info {
+      padding: 10px;
+      background-color: rgba(0, 0, 0, 0.7);
+    }
+    .image-name {
+      font-size: 14px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .image-size {
+      font-size: 12px;
+      color: #aaa;
+    }
+    .delete-btn {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      background-color: rgba(229, 9, 20, 0.8);
+      color: white;
+      border: none;
+      width: 25px;
+      height: 25px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 16px;
+      padding: 0;
+    }
+    .status-message {
+      background-color: #333;
+      padding: 10px;
+      border-radius: 4px;
+      margin: 20px 0;
+      display: none;
+    }
+    .success {
+      border-left: 4px solid #4CAF50;
+    }
+    .error {
+      border-left: 4px solid #f44336;
+    }
+  </style>
+</head>
+<body>
+  <h1>Teste de Upload de Imagens</h1>
+  
+  <div id="status" class="status-message"></div>
+  
+  <div class="form-group">
+    <label for="image-upload">Selecione uma imagem para upload:</label>
+    <input type="file" id="image-upload" accept="image/*">
+  </div>
+  
+  <button id="upload-btn">Fazer Upload</button>
+  
+  <h2>Imagens Enviadas</h2>
+  <div id="images-container" class="images-container">
+    <!-- Imagens serão exibidas aqui -->
+  </div>
+  
+  <script>
+    // Referências aos elementos do DOM
+    const uploadBtn = document.getElementById('upload-btn');
+    const fileInput = document.getElementById('image-upload');
+    const imagesContainer = document.getElementById('images-container');
+    const statusMsg = document.getElementById('status');
+    
+    // URL base da API
+    const API_URL = 'http://localhost:3000/api';
+    
+    // Função para mostrar mensagem de status
+    function showStatus(message, isError = false) {
+      statusMsg.textContent = message;
+      statusMsg.style.display = 'block';
+      statusMsg.className = 'status-message ' + (isError ? 'error' : 'success');
+      
+      // Esconder após 5 segundos
+      setTimeout(() => {
+        statusMsg.style.display = 'none';
+      }, 5000);
+    }
+    
+    // Função para formatar tamanho em KB/MB
+    function formatSize(bytes) {
+      if (bytes < 1024) return bytes + ' bytes';
+      if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
+      return (bytes / 1048576).toFixed(1) + ' MB';
+    }
+    
+    // Função para carregar e exibir todas as imagens
+    async function loadImages() {
+      try {
+        const response = await fetch(`${API_URL}/images`);
+        if (!response.ok) throw new Error('Erro ao carregar imagens');
+        
+        const data = await response.json();
+        
+        // Limpar contêiner
+        imagesContainer.innerHTML = '';
+        
+        // Exibir cada imagem
+        data.images.forEach(image => {
+          const card = document.createElement('div');
+          card.className = 'image-card';
+          card.innerHTML = `
+            <img src="${image.path}" alt="${image.originalName}">
+            <div class="image-info">
+              <div class="image-name">${image.originalName}</div>
+              <div class="image-size">${formatSize(image.size)}</div>
+            </div>
+            <button class="delete-btn" data-id="${image.id}">&times;</button>
+          `;
+          
+          imagesContainer.appendChild(card);
+          
+          // Adicionar evento para o botão de excluir
+          const deleteBtn = card.querySelector('.delete-btn');
+          deleteBtn.addEventListener('click', () => deleteImage(image.id));
+        });
+      } catch (error) {
+        console.error('Erro ao carregar imagens:', error);
+        showStatus('Erro ao carregar imagens', true);
+      }
+    }
+    
+    // Função para fazer upload de uma imagem
+    async function uploadImage() {
+      const file = fileInput.files[0];
+      if (!file) {
+        showStatus('Selecione uma imagem para fazer upload', true);
+        return;
+      }
+      
+      // Verificar se é uma imagem
+      if (!file.type.startsWith('image/')) {
+        showStatus('Por favor, selecione apenas arquivos de imagem', true);
+        return;
+      }
+      
+      // Criar FormData para enviar arquivo
+      const formData = new FormData();
+      formData.append('image', file);
+      
+      try {
+        const response = await fetch(`${API_URL}/upload`, {
+          method: 'POST',
+          body: formData
+        });
+        
+        if (!response.ok) {
+          const error = await response.json();
+          throw new Error(error.error || 'Erro desconhecido ao fazer upload');
+        }
+        
+        const data = await response.json();
+        showStatus('Imagem enviada com sucesso!');
+        
+        // Recarregar lista de imagens
+        loadImages();
+        
+        // Limpar input
+        fileInput.value = '';
+      } catch (error) {
+        console.error('Erro ao fazer upload:', error);
+        showStatus(`Erro ao fazer upload: ${error.message}`, true);
+      }
+    }
+    
+    // Função para excluir uma imagem
+    async function deleteImage(id) {
+      if (!confirm('Tem certeza que deseja excluir esta imagem?')) return;
+      
+      try {
+        const response = await fetch(`${API_URL}/images/${id}`, {
+          method: 'DELETE'
+        });
+        
+        if (!response.ok) {
+          const error = await response.json();
+          throw new Error(error.error || 'Erro desconhecido ao excluir imagem');
+        }
+        
+        showStatus('Imagem excluída com sucesso!');
+        
+        // Recarregar lista de imagens
+        loadImages();
+      } catch (error) {
+        console.error('Erro ao excluir imagem:', error);
+        showStatus(`Erro ao excluir imagem: ${error.message}`, true);
+      }
+    }
+    
+    // Evento de clique no botão de upload
+    uploadBtn.addEventListener('click', uploadImage);
+    
+    // Carregar imagens quando a página carregar
+    document.addEventListener('DOMContentLoaded', loadImages);
+  </script>
+</body>
+</html> 

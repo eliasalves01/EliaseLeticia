@@ -1,0 +1,17 @@
+{
+  "name": "netflix-amor",
+  "version": "1.0.0",
+  "description": "Site estilo Netflix para casais",
+  "main": "index.js",
+  "scripts": {
+    "dev": "concurrently \"cd server && npm run dev\" \"live-server --port=5502\"",
+    "build": "echo \"No build step required\" && exit 0",
+    "start": "cd server && node server.js"
+  },
+  "keywords": ["netflix", "amor", "casal"],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "concurrently": "^8.2.0"
+  }
+} 

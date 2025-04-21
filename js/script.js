@@ -128,6 +128,9 @@ document.addEventListener('DOMContentLoaded', function() {
   setupVideoPreview();
   setupBgMusicPlaylist(); // Configurar a playlist de música de fundo
   updateDaysCounter(); // Atualizar o contador de dias da seção Netflix
+  
+  // Carregar imagens salvas do localStorage
+  loadSavedImages();
 
   // Configurar atualização periódica do contador de dias (a cada hora)
   setInterval(updateDaysCounter, 3600000);
@@ -158,119 +161,14 @@ document.addEventListener('DOMContentLoaded', function() {
   updateTestimonialDisplay();
 
   // Botões do carrossel
-  document.querySelector('.prev-btn').addEventListener('click', function() {
+  document.querySelector('.prev-btn')?.addEventListener('click', function() {
     currentIndex = (currentIndex - 1 + totalTestimonials) % totalTestimonials;
     updateTestimonialDisplay();
   });
 
-  document.querySelector('.next-btn').addEventListener('click', function() {
+  document.querySelector('.next-btn')?.addEventListener('click', function() {
     currentIndex = (currentIndex + 1) % totalTestimonials;
     updateTestimonialDisplay();
-  });
-
-  // Galeria de mídia
-  const galleryItems = document.querySelectorAll('.gallery-item, .video-item');
-  const modal = document.getElementById('media-modal');
-  const modalContent = document.querySelector('.modal-content');
-  const mediaContainer = document.querySelector('.modal-media-container');
-  const modalCaption = document.querySelector('.modal-caption');
-  const closeBtn = document.querySelector('.modal-close');
-  const prevBtn = document.querySelector('.modal-nav-prev');
-  const nextBtn = document.querySelector('.modal-nav-next');
-  
-  let galleryIndex = 0;
-  const galleryMedia = [];
-  
-  // Coletar informações de mídia da galeria
-  galleryItems.forEach((item, index) => {
-    const isVideo = item.classList.contains('video-item');
-    const src = isVideo ? item.getAttribute('data-video') : item.querySelector('img').src;
-    const alt = item.querySelector('img').alt;
-    
-    galleryMedia.push({
-      isVideo: isVideo,
-      src: src,
-      alt: alt
-    });
-    
-    // Adicionar evento de clique
-    item.addEventListener('click', function() {
-      galleryIndex = index;
-      openModal(galleryIndex);
-    });
-  });
-  
-  // Funções para abrir/fechar modal
-  function openModal(index) {
-    const media = galleryMedia[index];
-    
-    // Limpar conteúdo anterior
-    mediaContainer.innerHTML = '';
-    
-    // Criar o elemento correto baseado no tipo de mídia
-    if (media.isVideo) {
-      const video = document.createElement('video');
-      video.src = media.src;
-      video.controls = true;
-      video.autoplay = true;
-      mediaContainer.appendChild(video);
-    } else {
-      const img = document.createElement('img');
-      img.src = media.src;
-      img.alt = media.alt;
-      mediaContainer.appendChild(img);
-    }
-    
-    // Atualizar legenda
-    modalCaption.textContent = media.alt;
-    
-    // Mostrar modal
-    modal.style.display = 'block';
-  }
-  
-  function closeModal() {
-    // Parar vídeo se estiver sendo reproduzido
-    const video = mediaContainer.querySelector('video');
-    if (video) {
-      video.pause();
-    }
-    
-    modal.style.display = 'none';
-  }
-  
-  // Eventos para navegação na galeria
-  closeBtn.addEventListener('click', closeModal);
-  
-  prevBtn.addEventListener('click', function() {
-    galleryIndex = (galleryIndex - 1 + galleryMedia.length) % galleryMedia.length;
-    openModal(galleryIndex);
-  });
-  
-  nextBtn.addEventListener('click', function() {
-    galleryIndex = (galleryIndex + 1) % galleryMedia.length;
-    openModal(galleryIndex);
-  });
-  
-  // Fechar modal ao clicar fora do conteúdo
-  modal.addEventListener('click', function(e) {
-    if (e.target === modal) {
-      closeModal();
-    }
-  });
-  
-  // Navegar com as teclas
-  document.addEventListener('keydown', function(e) {
-    if (modal.style.display === 'block') {
-      if (e.key === 'Escape') {
-        closeModal();
-      } else if (e.key === 'ArrowLeft') {
-        galleryIndex = (galleryIndex - 1 + galleryMedia.length) % galleryMedia.length;
-        openModal(galleryIndex);
-      } else if (e.key === 'ArrowRight') {
-        galleryIndex = (galleryIndex + 1) % galleryMedia.length;
-        openModal(galleryIndex);
-      }
-    }
   });
 });
 
@@ -2200,3 +2098,450 @@ document.addEventListener('DOMContentLoaded', function() {
   // Configurar atualização periódica do contador de dias (a cada hora)
   setInterval(updateDaysCounter, 3600000);
 });
+
+// Função para pular diretamente para o filme/tela principal
+function skipToMain() {
+  // Esconder a tela de perfil
+  const netflixProfiles = document.getElementById('netflix-profiles');
+  if (netflixProfiles) {
+    netflixProfiles.style.display = "none";
+  }
+  
+  // Esconder a tela de introdução e a tela inicial
+  const introEl = document.getElementById("intro");
+  const startScreen = document.getElementById("start-screen");
+  if (introEl) introEl.style.display = "none";
+  if (startScreen) startScreen.style.display = "none";
+  
+  // Ocultar a seção de música
+  const musicSection = document.getElementById("music-section");
+  if (musicSection) {
+    musicSection.classList.remove("active");
+    isMusicSectionActive = false;
+  }
+  
+  // Mostrar o header e o conteúdo principal
+  const header = document.querySelector("header");
+  const main = document.querySelector("main");
+  
+  if (header) {
+    header.style.display = "flex";
+    header.classList.add("show");
+  }
+  
+  if (main) {
+    main.style.display = "block";
+    main.classList.add("show");
+  }
+  
+  // Iniciar a reprodução do vídeo principal
+  const mainVideo = document.getElementById("main-video");
+  if (mainVideo) {
+    mainVideo.play().catch(err => {
+      console.log("Erro ao iniciar vídeo:", err);
+    });
+  }
+  
+  // Configurar música de fundo
+  const audio = document.getElementById("bg-music");
+  if (audio) {
+    // Definir música de fundo
+    audio.src = bgMusicPlaylist[currentBgMusicIndex].src;
+    audio.play().catch(err => {
+      console.log("Erro ao iniciar música de fundo:", err);
+    });
+    
+    // Mostrar o player flutuante
+    setTimeout(() => {
+      const floatingPlayer = document.getElementById('music-floating-player');
+      if (floatingPlayer) {
+        floatingPlayer.classList.add('show');
+      }
+    }, 3000);
+  }
+  
+  // Atualizar contador de dias
+  updateDaysCounter();
+}
+
+// Função para fazer upload de novas fotos
+function uploadNewPhoto() {
+  const fileInput = document.getElementById('photo-upload');
+  
+  // Limpar o valor para permitir selecionar o mesmo arquivo novamente
+  fileInput.value = '';
+  
+  // Trigger o clique no input de arquivo oculto
+  fileInput.click();
+  
+  // Adicionar evento para processar o arquivo selecionado
+  fileInput.onchange = function(event) {
+    const file = event.target.files[0];
+    
+    if (file) {
+      // Verificar se é uma imagem
+      if (!file.type.match('image.*')) {
+        alert('Por favor, selecione apenas arquivos de imagem.');
+        return;
+      }
+      
+      // Verificar o tamanho do arquivo - limite de 5MB
+      if (file.size > 5 * 1024 * 1024) {
+        alert('O arquivo é muito grande. O tamanho máximo permitido é 5MB.');
+        return;
+      }
+      
+      // Mostrar carregamento
+      showUploadingStatus();
+      
+      // Criar FormData para enviar o arquivo
+      const formData = new FormData();
+      formData.append('image', file);
+      
+      // URL base dinâmica
+      const apiBaseUrl = getApiBaseUrl();
+      const serverUrl = `${apiBaseUrl}/api/upload`;
+      
+      console.log('Enviando para:', serverUrl);
+      
+      // Enviar para o servidor
+      fetch(serverUrl, {
+        method: 'POST',
+        body: formData,
+        mode: 'cors',
+        credentials: 'same-origin',
+        headers: {
+          'Accept': 'application/json'
+        }
+      })
+      .then(response => {
+        if (!response.ok) {
+          // Tentar obter mais informações sobre o erro
+          return response.json().then(errData => {
+            throw new Error(errData.error || 'Erro ao fazer upload da imagem');
+          }).catch(() => {
+            // Se não conseguir obter JSON, usar o status HTTP
+            throw new Error(`Erro ao fazer upload: ${response.status} ${response.statusText}`);
+          });
+        }
+        return response.json();
+      })
+      .then(data => {
+        // Adicionar a imagem à galeria
+        addImageToGallery(
+          data.image.path,        // URL da imagem no servidor
+          data.image.originalName, // Nome original do arquivo
+          data.image.id,           // ID único gerado pelo servidor
+          true                     // É uma imagem do servidor
+        );
+        
+        // Atualizar os indicadores de paginação para mobile
+        updateGalleryPagination();
+        
+        // Esconder carregamento
+        hideUploadingStatus();
+      })
+      .catch(error => {
+        console.error('Erro ao fazer upload:', error);
+        alert(`Erro ao fazer upload da imagem: ${error.message || 'Tente novamente.'}`);
+        hideUploadingStatus();
+      });
+    }
+  };
+}
+
+// Funções para mostrar/esconder status de carregamento
+function showUploadingStatus() {
+  // Você pode implementar um indicador de carregamento aqui
+  console.log('Enviando imagem...');
+}
+
+function hideUploadingStatus() {
+  // Esconder o indicador de carregamento
+  console.log('Upload concluído.');
+}
+
+// Função para carregar todas as imagens do servidor
+function loadImagesFromServer() {
+  // URL base dinâmica
+  const apiBaseUrl = getApiBaseUrl();
+  const serverUrl = `${apiBaseUrl}/api/images`;
+  
+  console.log('Carregando imagens de:', serverUrl);
+  
+  fetch(serverUrl, {
+    method: 'GET',
+    mode: 'cors',
+    credentials: 'same-origin'
+  })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`Erro ao carregar imagens do servidor: ${response.status} ${response.statusText}`);
+      }
+      return response.json();
+    })
+    .then(data => {
+      // Para cada imagem retornada pelo servidor
+      data.images.forEach(image => {
+        // Adicionar à galeria
+        addImageToGallery(
+          image.path,         // URL da imagem no servidor
+          image.originalName, // Nome original do arquivo
+          image.id,           // ID único gerado pelo servidor
+          true                // É uma imagem do servidor
+        );
+      });
+      
+      // Atualizar a paginação
+      updateGalleryPagination();
+    })
+    .catch(error => {
+      console.error('Erro ao carregar imagens do servidor:', error);
+    });
+}
+
+// Função para excluir uma foto
+function deletePhoto(imageId, isServerImage = false) {
+  if (confirm('Tem certeza que deseja excluir esta foto?')) {
+    // Se for uma imagem do servidor
+    if (isServerImage) {
+      // URL base dinâmica
+      const apiBaseUrl = getApiBaseUrl();
+      const serverUrl = `${apiBaseUrl}/api/images/${imageId}`;
+      
+      console.log('Excluindo imagem em:', serverUrl);
+      
+      // Enviar solicitação de exclusão para o servidor
+      fetch(serverUrl, {
+        method: 'DELETE',
+        mode: 'cors',
+        credentials: 'same-origin'
+      })
+      .then(response => {
+        if (!response.ok) {
+          return response.json().then(errData => {
+            throw new Error(errData.error || 'Erro ao excluir imagem do servidor');
+          }).catch(() => {
+            throw new Error(`Erro ao excluir imagem: ${response.status} ${response.statusText}`);
+          });
+        }
+        return response.json();
+      })
+      .then(() => {
+        // Remover do DOM
+        const photoElement = document.querySelector(`.gallery-item[data-id="${imageId}"]`);
+        if (photoElement) {
+          photoElement.remove();
+        }
+        
+        // Remover da lista de mídia
+        const mediaIndex = galleryMedia.findIndex(item => item.id === imageId);
+        if (mediaIndex !== -1) {
+          galleryMedia.splice(mediaIndex, 1);
+        }
+        
+        // Atualizar pontos de paginação
+        updateGalleryPagination();
+      })
+      .catch(error => {
+        console.error('Erro ao excluir imagem do servidor:', error);
+        alert('Erro ao excluir imagem. Tente novamente.');
+      });
+    } 
+    // Se for uma imagem local (fallback para compatibilidade)
+    else {
+      // Remover do DOM
+      const photoElement = document.querySelector(`.gallery-item[data-id="${imageId}"]`);
+      if (photoElement) {
+        photoElement.remove();
+      }
+      
+      // Remover da lista de mídia
+      const mediaIndex = galleryMedia.findIndex(item => item.id === imageId);
+      if (mediaIndex !== -1) {
+        galleryMedia.splice(mediaIndex, 1);
+      }
+      
+      // Remover do armazenamento local
+      removeImageFromLocalStorage(imageId);
+      
+      // Atualizar pontos de paginação
+      updateGalleryPagination();
+    }
+  }
+}
+
+// Carregar imagens do servidor quando a página carregar
+document.addEventListener('DOMContentLoaded', function() {
+  // Inicializar as referências DOM e outros setupes...
+  
+  // Tentar carregar imagens do servidor
+  loadImagesFromServer();
+  
+  // Fallback para localStorage se o servidor não estiver disponível
+  // (isso pode ser removido depois que o servidor estiver funcionando 100%)
+  loadSavedImages();
+});
+
+// Função para carregar imagens salvas no carregamento da página
+function loadSavedImages() {
+  const savedImages = JSON.parse(localStorage.getItem('savedGalleryImages')) || [];
+  
+  // Adicionar cada imagem salva
+  savedImages.forEach(image => {
+    if (image.url && image.id) {
+      addImageToGallery(image.url, image.name, image.id);
+    }
+  });
+}
+
+// Função para salvar a imagem no armazenamento local
+function saveImageToLocalStorage(imageUrl, imageName, imageId) {
+  // Obter lista existente ou criar nova
+  let savedImages = JSON.parse(localStorage.getItem('savedGalleryImages')) || [];
+  
+  // Adicionar nova imagem
+  savedImages.push({
+    url: imageUrl,
+    name: imageName,
+    id: imageId,
+    date: new Date().toISOString()
+  });
+  
+  // Salvar de volta ao localStorage
+  try {
+    localStorage.setItem('savedGalleryImages', JSON.stringify(savedImages));
+  } catch (e) {
+    console.error('Erro ao salvar imagem no localStorage:', e);
+    alert('Não foi possível salvar a imagem localmente. O armazenamento pode estar cheio.');
+  }
+}
+
+// Função para remover imagem do armazenamento local
+function removeImageFromLocalStorage(imageId) {
+  // Obter lista existente
+  let savedImages = JSON.parse(localStorage.getItem('savedGalleryImages')) || [];
+  
+  // Filtrar a imagem que deve ser removida
+  savedImages = savedImages.filter(image => image.id !== imageId);
+  
+  // Salvar de volta ao localStorage
+  try {
+    localStorage.setItem('savedGalleryImages', JSON.stringify(savedImages));
+  } catch (e) {
+    console.error('Erro ao atualizar localStorage:', e);
+  }
+}
+
+// Função para adicionar uma imagem à galeria de fotos
+function addImageToGallery(imageUrl, imageName, imageId, isServerImage = false) {
+  // Verificar se a galeria existe
+  const galleryContainer = document.querySelector('.gallery-container .gallery');
+  if (!galleryContainer) {
+    console.error('Container da galeria não encontrado');
+    return;
+  }
+  
+  // Verificar se a imagem já existe na galeria (evitar duplicatas)
+  if (document.querySelector(`.gallery-item[data-id="${imageId}"]`)) {
+    console.log('Imagem já existe na galeria, ignorando:', imageId);
+    return;
+  }
+  
+  // Criar elemento da galeria
+  const galleryItem = document.createElement('div');
+  galleryItem.className = 'gallery-item';
+  galleryItem.setAttribute('data-id', imageId);
+  
+  // URL completa para imagens do servidor
+  const fullImageUrl = isServerImage ? 
+    (imageUrl.startsWith('http') ? imageUrl : `${getApiBaseUrl()}${imageUrl}`) : 
+    imageUrl;
+  
+  // Adicionar HTML interno
+  galleryItem.innerHTML = `
+    <div class="gallery-image-container">
+      <img src="${fullImageUrl}" alt="${imageName || 'Imagem da galeria'}" class="gallery-image">
+      <div class="gallery-image-overlay">
+        <div class="gallery-image-actions">
+          <button class="view-image-btn" title="Ver imagem em tamanho completo">
+            <i class="fas fa-search-plus"></i>
+          </button>
+          <button class="delete-image-btn" title="Excluir imagem">
+            <i class="fas fa-trash"></i>
+          </button>
+        </div>
+      </div>
+      <button class="delete-photo-btn" title="Excluir imagem">×</button>
+    </div>
+    <div class="gallery-image-caption">${imageName || 'Imagem carregada'}</div>
+  `;
+  
+  // Adicionar ao início da galeria (ou no final, dependendo da preferência)
+  galleryContainer.prepend(galleryItem);
+  
+  // Adicionar à variável galleryMedia para o modal de visualização
+  galleryMedia.push({
+    src: fullImageUrl,
+    caption: imageName || 'Imagem da galeria',
+    type: 'image',
+    id: imageId,
+    isServerImage: isServerImage
+  });
+  
+  // Adicionar eventos
+  const viewBtn = galleryItem.querySelector('.view-image-btn');
+  if (viewBtn) {
+    viewBtn.addEventListener('click', () => {
+      openMediaModal(fullImageUrl, imageName || '', 'image');
+    });
+  }
+  
+  const deleteBtn = galleryItem.querySelector('.delete-image-btn');
+  if (deleteBtn) {
+    deleteBtn.addEventListener('click', () => {
+      deletePhoto(imageId, isServerImage);
+    });
+  }
+  
+  // Evento para visualizar ao clicar na imagem
+  const image = galleryItem.querySelector('.gallery-image');
+  if (image) {
+    image.addEventListener('click', () => {
+      openMediaModal(fullImageUrl, imageName || '', 'image');
+    });
+  }
+  
+  // Salvar no localStorage apenas se não for do servidor
+  if (!isServerImage) {
+    saveImageToLocalStorage(imageUrl, imageName, imageId);
+  }
+  
+  // Atualizar paginação da galeria
+  updateGalleryPagination();
+  
+  console.log(`Imagem adicionada à galeria: ${imageName || 'Sem nome'} (${imageId})`);
+  
+  // Adicionar eventos para o novo botão de exclusão
+  const deletePhotoBtn = galleryItem.querySelector('.delete-photo-btn');
+  if (deletePhotoBtn) {
+    deletePhotoBtn.addEventListener('click', (e) => {
+      e.stopPropagation(); // Evitar propagar para o evento de clique da imagem
+      if (confirm('Tem certeza que deseja excluir esta foto?')) {
+        deletePhoto(imageId, isServerImage);
+      }
+    });
+  }
+}
+
+// Função para obter a URL base do servidor dependendo do ambiente
+function getApiBaseUrl() {
+  // Detectar se estamos em produção no Vercel ou no localhost
+  const hostname = window.location.hostname;
+  if (hostname === 'localhost' || hostname === '127.0.0.1') {
+    return 'http://localhost:3000';
+  } else {
+    // Em produção, a API está na mesma origem
+    return '';
+  }
+}
