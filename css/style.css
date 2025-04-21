@@ -1424,6 +1424,7 @@ main.show {
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.3s ease;
+  cursor: pointer;
 }
 
 #media-modal.hidden {
@@ -1627,4 +1628,14 @@ main.show {
   .gallery-item, .video-item {
     width: 85%;
   }
+}
+
+.media-content {
+  cursor: default;
+  transition: transform 0.2s ease;
+}
+
+#media-container img.media-content:hover,
+#media-container video.media-content:hover {
+  transform: scale(1.02);
 }

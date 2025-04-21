@@ -68,7 +68,7 @@ const texts = [
   "Essas músicas são a trilha sonora da nossa história", // 4
   "Cada melodia guarda um pedaço do nosso amor", // 5
   "Lembra quando ouvimos 'I Wanna Be Yours' pela primeira vez juntos?", // 6
-  "É como diz compass , eu guardo você comigo, porque é minha bússola.", // 7
+  "Como diz Compass, eu te guardo comigo, porque você é minha bússola", // 7
   "Ou quando 'Monde Nouveau' tocou e você disse que era nossa música?", // 8
   "São nessas pequenas lembranças que nosso amor se fortalece", // 9
   "E mesmo quando as notas terminam, nosso amor continua ecoando", // 10
@@ -379,9 +379,8 @@ ${horasTotais.toLocaleString()} horas de histórias criadas juntos!`;
     // Número de meses entre as datas
     const meses = (anoAtual - anoInicio) * 12 + (mesAtual - mesInicio);
     
-    return `Estamos juntos a:
-${meses} ${meses === 1 ? 'mês ' : 'meses '}
-${horasTotais.toLocaleString()} horas de histórias criadas juntos!`;
+    return `Estamos juntos a: ${meses} ${meses === 1 ? 'mês' : 'meses'} ${horasTotais.toLocaleString()} horas de histórias criadas juntos!`
+
   }
   
   // Calcular diferença em meses considerando o dia exato
@@ -1490,32 +1489,39 @@ function openMediaModal(mediaSrc, caption, type) {
   // Exibir o modal
   mediaModal.classList.remove('hidden');
   
+  // Inicializar os indicadores de swipe
+  updateSwipeIndicators();
+  
   // Adicionar eventos aos botões de navegação e fechar
-  document.querySelector('.media-nav.prev').onclick = () => navigateMedia('prev');
-  document.querySelector('.media-nav.next').onclick = () => navigateMedia('next');
-  document.getElementById('close-media-modal').onclick = () => {
-    // Pausar vídeo se estiver sendo exibido
-    if (type === 'video') {
-      const videoElement = mediaContainer.querySelector('video');
-      if (videoElement) {
-        videoElement.pause();
-      }
-    }
-    mediaModal.classList.add('hidden');
+  document.querySelector('.media-nav.prev').onclick = (e) => {
+    e.stopPropagation(); // Evitar que o clique se propague para o modal
+    navigateMedia('prev');
   };
   
-  // Fechar ao clicar fora da mídia
+  document.querySelector('.media-nav.next').onclick = (e) => {
+    e.stopPropagation(); // Evitar que o clique se propague para o modal
+    navigateMedia('next');
+  };
+  
+  document.getElementById('close-media-modal').onclick = (e) => {
+    e.stopPropagation(); // Evitar que o clique se propague para o modal
+    closeMediaModal(type);
+  };
+  
+  // Fechar ao clicar fora da mídia (no overlay preto)
   mediaModal.addEventListener('click', (e) => {
-    if (e.target === mediaModal) {
-      if (type === 'video') {
-        const videoElement = mediaContainer.querySelector('video');
-        if (videoElement) {
-          videoElement.pause();
-        }
-      }
-      mediaModal.classList.add('hidden');
+    // Verificar se o clique foi no modal (overlay) e não na mídia
+    if (e.target === mediaModal || e.target === mediaContainer) {
+      closeMediaModal(type);
     }
   });
+  
+  // Impedir que cliques na mídia fechem o modal
+  if (mediaElement) {
+    mediaElement.addEventListener('click', (e) => {
+      e.stopPropagation();
+    });
+  }
   
   // Adicionar suporte a gestos de swipe para navegação em dispositivos móveis
   let touchStartX = 0;
@@ -1531,7 +1537,7 @@ function openMediaModal(mediaSrc, caption, type) {
   }, { passive: true });
   
   function handleSwipeForMedia() {
-    const threshold = 100; // Mínimo de pixels para contar como swipe
+    const threshold = 80; // Mínimo de pixels para contar como swipe
     
     if (touchEndX - touchStartX > threshold) {
       // Swipe para a direita - imagem anterior
@@ -1597,6 +1603,49 @@ function navigateMedia(direction) {
   if (mediaCaption) {
     mediaCaption.textContent = currentMedia.caption || '';
     mediaCaption.style.display = currentMedia.caption ? 'block' : 'none';
+  }
+  
+  // Atualizar os indicadores de posição para dispositivos móveis
+  updateSwipeIndicators();
+}
+
+// Função para atualizar os indicadores de posição no mobile
+function updateSwipeIndicators() {
+  const totalItems = galleryMedia.length;
+  if (totalItems <= 1) return;
+  
+  // Remover indicadores anteriores
+  const indicatorContainer = document.querySelector('.swipe-indicator-dots');
+  if (!indicatorContainer) return;
+  
+  indicatorContainer.innerHTML = '';
+  
+  // Determinar quantos pontos mostrar (máximo de 5)
+  const maxDots = Math.min(5, totalItems);
+  let startIndex = currentMediaIndex - Math.floor(maxDots / 2);
+  
+  // Ajustar índices para não exceder os limites
+  if (startIndex < 0) startIndex = 0;
+  if (startIndex + maxDots > totalItems) startIndex = totalItems - maxDots;
+  
+  // Criar pontos
+  for (let i = 0; i < maxDots; i++) {
+    const dotIndex = (startIndex + i) % totalItems;
+    const dot = document.createElement('div');
+    dot.className = 'swipe-indicator-dot';
+    
+    if (dotIndex === currentMediaIndex) {
+      dot.classList.add('active');
+    }
+    
+    indicatorContainer.appendChild(dot);
+  }
+  
+  // Mostrar indicador de posição atual / total
+  const touchIndicator = document.querySelector('.touch-indicator');
+  if (touchIndicator) {
+    const text = touchIndicator.childNodes[0];
+    text.nodeValue = `${currentMediaIndex + 1}/${totalItems} - Arraste para navegar`;
   }
 }
 

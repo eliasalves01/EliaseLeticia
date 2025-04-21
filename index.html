@@ -137,7 +137,7 @@
     .netflix-skip-button {
       position: relative;
       padding: 12px 30px;
-      background-color: rgba(255, 255, 255, 0.3);
+      background-color: rgba(255, 255, 255, 0.05);
       color: white;
       border: none;
       border-radius: 4px;
@@ -153,7 +153,7 @@
     }
     
     .netflix-skip-button:hover {
-      background-color: rgba(255, 255, 255, 0.4);
+      background-color: rgba(255, 255, 255, 0.15);
       transform: scale(1.05);
     }
     
@@ -175,7 +175,7 @@
       }
       
       .netflix-skip-button {
-        font-size: 16px;
+        font-size: 14px;
         padding: 10px 24px;
         min-width: 160px;
         margin-top: 8vh;
@@ -206,7 +206,7 @@
       }
       
       .netflix-skip-button {
-        font-size: 18px;
+        font-size: 16px;
         padding: 12px 20px;
         min-width: 170px;
         margin-top: 6vh;
@@ -511,9 +511,11 @@
       <!-- O conteúdo (imagem ou vídeo) será inserido aqui via JavaScript -->
     </div>
     <div id="media-caption" class="text-white text-xl mt-4 text-center"></div>
-    <!-- Botões de navegação -->
+    <!-- Botões de navegação (visíveis apenas em desktop) -->
     <button class="media-nav prev absolute left-0 top-1/2 transform -translate-y-1/2 text-white text-5xl bg-black bg-opacity-40 hover:bg-opacity-60 p-3 rounded-r-lg z-50">❮</button>
     <button class="media-nav next absolute right-0 top-1/2 transform -translate-y-1/2 text-white text-5xl bg-black bg-opacity-40 hover:bg-opacity-60 p-3 rounded-l-lg z-50">❯</button>
+    <!-- Indicador de swipe para mobile -->
+
   </div>
 
   <script src="/js/script.js"></script>
