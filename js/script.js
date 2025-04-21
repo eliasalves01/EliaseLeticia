@@ -2455,8 +2455,14 @@ function addImageToGallery(imageUrl, imageName, imageId, isServerImage = false) 
   
   // URL completa para imagens do servidor
   const fullImageUrl = isServerImage ? 
-    (imageUrl.startsWith('http') ? imageUrl : `${getApiBaseUrl()}${imageUrl}`) : 
+    (imageUrl.startsWith('http') ? imageUrl : 
+     // Tratamento especial para URLs do Vercel
+     (isVercelEnvironment() && imageUrl.startsWith('/uploads/') ? 
+      `${getApiBaseUrl()}${imageUrl}` : 
+      `${getApiBaseUrl()}${imageUrl}`)) : 
     imageUrl;
+  
+  console.log('URL da imagem para exibição:', fullImageUrl);
   
   // Adicionar HTML interno
   galleryItem.innerHTML = `
@@ -2532,6 +2538,12 @@ function addImageToGallery(imageUrl, imageName, imageId, isServerImage = false) 
       }
     });
   }
+}
+
+// Função para verificar se estamos no Vercel
+function isVercelEnvironment() {
+  const hostname = window.location.hostname;
+  return hostname.includes('vercel.app') || hostname.includes('.now.sh');
 }
 
 // Função para obter a URL base do servidor dependendo do ambiente
