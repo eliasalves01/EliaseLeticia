@@ -68,7 +68,8 @@ const texts = [
   "Essas músicas são a trilha sonora da nossa história", // 4
   "Cada melodia guarda um pedaço do nosso amor", // 5
   "Lembra quando ouvimos 'I Wanna Be Yours' pela primeira vez juntos?", // 6
-  "Ou quando 'Monde Nouveau' tocou e você disse que era nossa música?", // 7
+  "É como diz compass , eu guardo você comigo, porque é minha bússola.", // 7
+  "Ou quando 'Monde Nouveau' tocou e você disse que era nossa música?", // 8
   "São nessas pequenas lembranças que nosso amor se fortalece", // 9
   "E mesmo quando as notas terminam, nosso amor continua ecoando", // 10
   "Você é a melodia que embala meus dias e acalenta minhas noites", // 11 
@@ -80,21 +81,22 @@ const texts = [
 
 // Definir tempos de exibição personalizados para cada texto (em milissegundos)
 const textDurations = [
-  1,  // Texto 0: "No instante em que nossos olhos se encontraram..."
-  1,  // Texto 1: "Eu senti que o universo conspirava para nos unir"
-  1,  // Texto 2: "Seu sorriso iluminou meu mundo..."
-  1,  // Texto 3: "E desde então, cada momento ao seu lado tem sido unicos"
-  1,  // Texto 4: "Essas músicas são a trilha sonora da nossa história"
-  1,  // Texto 5: "Cada melodia guarda um pedaço do nosso amor"
-  1,  // Texto 6: "Lembra quando ouvimos 'I Wanna Be Yours'..."
-  2,  // Texto 7: "Ou quando 'Monde Nouveau' tocou..."
-  2,  // Texto 9: "São nessas pequenas lembranças que nosso amor se fortalece"
-  2,  // Texto 10: "E mesmo quando as notas terminam, nosso amor continua ecoando"
-  2,  // Texto 11: "Você é a melodia que embala meus dias e acalenta minhas noites"
-  2,  // Texto 12: "Prometo ser o refrão que sempre se repete no seu coração"
-  2,  // Texto 13: "Nosso amor é como uma música perfeita - sem fim, apenas harmonia"
-  2,  // Texto 14: calcularTempoRelacionamento() - Precisa de mais tempo pois é dinâmico
-  2   // Texto 15: "Te amo mais que todas as estrelas no céu e todas as notas já cantadas"
+  5000,  // Texto 0: "No instante em que nossos olhos se encontraram..."
+  5000,  // Texto 1: "Eu senti que o universo conspirava para nos unir"
+  5000,  // Texto 2: "Seu sorriso iluminou meu mundo..."
+  5000,  // Texto 3: "E desde então, cada momento ao seu lado tem sido unicos"
+  5000,  // Texto 4: "Essas músicas são a trilha sonora da nossa história"
+  5000,  // Texto 5: "Cada melodia guarda um pedaço do nosso amor"
+  12000,  // Texto 6: "Lembra quando ouvimos 'I Wanna Be Yours'..."
+  12000,  // Texto 7: ""
+  6000,  // Texto 8: "Ou quando 'Monde Nouveau' tocou..."
+  5000,  // Texto 9: "São nessas pequenas lembranças que nosso amor se fortalece"
+  5000,  // Texto 10: "E mesmo quando as notas terminam, nosso amor continua ecoando"
+  5000,  // Texto 11: "Você é a melodia que embala meus dias e acalenta minhas noites"
+  5000,  // Texto 12: "Prometo ser o refrão que sempre se repete no seu coração"
+  5000,  // Texto 13: "Nosso amor é como uma música perfeita - sem fim, apenas harmonia"
+  6500,  // Texto 14: calcularTempoRelacionamento() - Precisa de mais tempo pois é dinâmico
+  5000   // Texto 15: "Te amo mais que todas as estrelas no céu e todas as notas já cantadas"
 ];
 
 // Elementos DOM
@@ -800,84 +802,108 @@ function setupVideo() {
 
 // Configuração do modal de vídeo
 function setupVideoModal() {
-  console.log("Configurando modal de vídeo");
   const btnPlay = document.querySelector('.btn-play');
   const videoModal = document.getElementById('video-modal');
   const modalVideo = document.getElementById('modal-video');
   const closeModal = document.getElementById('close-modal');
   const bgMusic = document.getElementById('bg-music');
 
-  if (!btnPlay) {
-    console.error("Botão de play não encontrado");
+  // Verificar se todos os elementos necessários estão presentes
+  if (!btnPlay || !videoModal || !modalVideo || !closeModal) {
+    console.error("Elementos necessários para o modal de vídeo não encontrados");
     return;
   }
 
-  if (!videoModal) {
-    console.error("Modal de vídeo não encontrado");
-    return;
-  }
+  // Pré-carregar o vídeo para reprodução mais rápida
+  modalVideo.load();
 
-  if (!modalVideo) {
-    console.error("Vídeo do modal não encontrado");
-    return;
-  }
-
-  if (!closeModal) {
-    console.error("Botão de fechar modal não encontrado");
-    return;
-  }
-
-  btnPlay.addEventListener('click', function() {
-    console.log("Botão Assistir clicado");
-    videoModal.classList.remove('hidden');
-    videoModal.classList.add('active'); // Adicionar classe 'active' para exibir o modal
-    
-    // Verificação adicional para dispositivos iOS e outros navegadores problemáticos
-    if (window.getComputedStyle(videoModal).display === 'none') {
-      videoModal.style.display = 'flex'; // Forçar display flex para segurança
-      console.log("Aplicando display:flex diretamente por segurança");
-    }
-    
-    // Garantir que o vídeo tenha uma fonte
-    const source = modalVideo.querySelector('source');
-    if (source && !source.src) {
-      source.src = "assets/video.mp4";
-      modalVideo.load();
-    }
-    
-    try {
-      modalVideo.play()
-        .then(() => console.log("Vídeo iniciado com sucesso"))
-        .catch(err => console.error("Erro ao iniciar vídeo:", err));
-    } catch (e) {
-      console.error("Erro ao tentar reproduzir vídeo:", e);
-    }
-    
-    if (bgMusic) {
+  // Evento para abrir o modal
+  btnPlay.addEventListener('click', () => {
+    // Pausar música de fundo
+    if (bgMusic && !bgMusic.paused) {
       bgMusic.pause();
     }
+    
+    // Mostrar o modal
+    videoModal.classList.remove('hidden');
+    document.body.style.overflow = 'hidden'; // Impedir rolagem de fundo
+    
+    // Tentar reproduzir o vídeo após um pequeno delay para garantir que o modal esteja visível
+    setTimeout(() => {
+      try {
+        const playPromise = modalVideo.play();
+        
+        if (playPromise !== undefined) {
+          playPromise.catch(error => {
+            console.error('Erro ao reproduzir vídeo:', error);
+            // Mostrar um botão de play manual caso a reprodução automática falhe
+            const playButton = document.createElement('button');
+            playButton.innerHTML = '▶';
+            playButton.className = 'manual-play-button';
+            playButton.onclick = () => modalVideo.play();
+            videoModal.appendChild(playButton);
+          });
+        }
+      } catch (error) {
+        console.error('Erro ao iniciar vídeo:', error);
+      }
+    }, 300);
   });
 
-  closeModal.addEventListener('click', function() {
-    console.log("Botão fechar clicado");
+  // Evento para fechar o modal com o botão
+  closeModal.addEventListener('click', () => {
+    // Pausar o vídeo
     modalVideo.pause();
-    videoModal.classList.remove('active'); // Remover a classe 'active'
-    videoModal.classList.add('hidden');
+    modalVideo.currentTime = 0;
     
-    if (bgMusic) {
-      bgMusic.play().catch(e => console.log("Erro ao retomar música:", e));
+    // Esconder o modal
+    videoModal.classList.add('hidden');
+    document.body.style.overflow = 'auto'; // Restaurar rolagem
+    
+    // Retomar música de fundo
+    if (bgMusic && bgMusic.paused) {
+      try {
+        bgMusic.play();
+      } catch (error) {
+        console.warn('Não foi possível retomar a música de fundo:', error);
+      }
     }
   });
 
-  videoModal.addEventListener('click', function(e) {
+  // Evento para fechar clicando fora do vídeo
+  videoModal.addEventListener('click', (e) => {
     if (e.target === videoModal) {
-      console.log("Clique fora do vídeo");
       modalVideo.pause();
-      videoModal.classList.remove('active'); // Remover a classe 'active'
+      modalVideo.currentTime = 0;
       videoModal.classList.add('hidden');
+      document.body.style.overflow = 'auto'; // Restaurar rolagem
       
-      if (bgMusic) {
-        bgMusic.play().catch(e => console.log("Erro ao retomar música:", e));
+      // Retomar música de fundo
+      if (bgMusic && bgMusic.paused) {
+        try {
+          bgMusic.play();
+        } catch (error) {
+          console.warn('Não foi possível retomar a música de fundo:', error);
+        }
+      }
+    }
+  });
+
+  // Tecla ESC para fechar o modal
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && !videoModal.classList.contains('hidden')) {
+      modalVideo.pause();
+      modalVideo.currentTime = 0;
+      videoModal.classList.add('hidden');
+      document.body.style.overflow = 'auto'; // Restaurar rolagem
+      
+      // Retomar música de fundo
+      if (bgMusic && bgMusic.paused) {
+        try {
+          bgMusic.play();
+        } catch (error) {
+          console.warn('Não foi possível retomar a música de fundo:', error);
+        }
       }
     }
   });
@@ -885,13 +911,25 @@ function setupVideoModal() {
 
 // Funções da introdução
 function iniciar() {
+  // Esconder a tela de perfil
+  const netflixProfiles = document.getElementById('netflix-profiles');
+  if (netflixProfiles) {
+    netflixProfiles.style.display = "none";
+  }
+  
+  // Esconder a tela inicial se ainda estiver visível
   startScreen.style.display = "none";
+  
+  // Mostrar a tela de introdução
   introEl.style.display = "flex";
   
   // Garantir que estamos usando a música correta da playlist
   if (audio) {
     audio.src = bgMusicPlaylist[currentBgMusicIndex].src;
-    audio.play();
+    audio.play().catch(e => {
+      console.warn("Erro ao iniciar música automaticamente:", e);
+      // Em muitos navegadores, a reprodução automática só é permitida após interação do usuário
+    });
   }
   
   gerarEstrelas(introEl);
@@ -939,10 +977,25 @@ function showNextText() {
         audio.src = bgMusicPlaylist[1].src;
         audio.play().catch(e => console.error("Erro no fallback de música:", e));
       }
-    }
+    } 
   } else if (current === 7) {
+    // Voltar para a música padrão (índice 0 da playlist)
+    console.log("Voltando para música padrão (índice 7)");
+    try {
+      fadeToSong(2); // 
+    } catch (error) {
+      console.error("Erro ao voltar para a música padrão:", error);
+      // Fallback: tentar alterar a música diretamente
+      if (audio) {
+        currentBgMusicIndex = 2;
+        audio.src = bgMusicPlaylist[2].src;
+        audio.play().catch(e => console.error("Erro no fallback de música:", e));
+      }
+    }
+  }
+   else if (current === 8) {
     // Mudar para a música "Monde Nouveau" (índice 0 da playlist)
-    console.log("Transitando para música 'Monde Nouveau' (índice 7)");
+    console.log("Transitando para música 'Monde Nouveau' (índice 8)");
     try {
       fadeToSong(0); // Oscar Anton - Monde Nouveau
     } catch (error) {
@@ -954,21 +1007,7 @@ function showNextText() {
         audio.play().catch(e => console.error("Erro no fallback de música:", e));
       }
     }
-  }  else if (current === 9) {
-    // Voltar para a música padrão (índice 0 da playlist)
-    console.log("Voltando para música padrão (índice 9)");
-    try {
-      fadeToSong(0); // Oscar Anton - Monde Nouveau
-    } catch (error) {
-      console.error("Erro ao voltar para a música padrão:", error);
-      // Fallback: tentar alterar a música diretamente
-      if (audio) {
-        currentBgMusicIndex = 0;
-        audio.src = bgMusicPlaylist[0].src;
-        audio.play().catch(e => console.error("Erro no fallback de música:", e));
-      }
-    }
-  }
+  } 
   
   // Reset do texto para garantir animação limpa
   textEl.classList.remove("visible");
@@ -1026,7 +1065,7 @@ function showNextText() {
             // Liberar a flag de transição
             textTransitionInProgress = false;
           }, 500);
-        }, isMobile ? 4000 : 3500); // Tempo extra para leitura em dispositivos móveis
+        }, isMobile ? 5000 : 3500); // Tempo extra para leitura em dispositivos móveis
         return;
       }
       
@@ -1324,35 +1363,27 @@ function setupMediaModal() {
   const mediaModal = document.getElementById('media-modal');
   const closeButton = document.getElementById('close-media-modal');
   const mediaContainer = document.getElementById('media-container');
+  const prevButton = document.querySelector('.media-nav.prev');
+  const nextButton = document.querySelector('.media-nav.next');
   
   if (!mediaModal || !closeButton || !mediaContainer) {
     console.error('Elementos do modal de mídia não encontrados');
     return;
   }
   
-  const modalContainer = mediaModal.querySelector('.relative');
-  
-  // Adicionar botões de navegação se ainda não existirem
-  if (!document.querySelector('.media-nav.prev')) {
-    const prevButton = document.createElement('button');
-    prevButton.className = 'media-nav prev absolute left-0 top-1/2 transform -translate-y-1/2 text-white text-4xl bg-black bg-opacity-30 p-3 rounded-r-lg';
-    prevButton.innerHTML = '❮';
+  // Adicionar eventos para navegação
+  if (prevButton) {
     prevButton.addEventListener('click', (e) => {
       e.stopPropagation();
       navigateMedia('prev');
     });
-    modalContainer.appendChild(prevButton);
   }
   
-  if (!document.querySelector('.media-nav.next')) {
-    const nextButton = document.createElement('button');
-    nextButton.className = 'media-nav next absolute right-0 top-1/2 transform -translate-y-1/2 text-white text-4xl bg-black bg-opacity-30 p-3 rounded-l-lg';
-    nextButton.innerHTML = '❯';
+  if (nextButton) {
     nextButton.addEventListener('click', (e) => {
       e.stopPropagation();
       navigateMedia('next');
     });
-    modalContainer.appendChild(nextButton);
   }
   
   // Fechar quando clicar no botão de fechar
@@ -1362,7 +1393,7 @@ function setupMediaModal() {
     document.body.style.overflow = 'auto';
   });
   
-  // Fechar quando clicar fora da imagem
+  // Fechar quando clicar fora da mídia
   mediaModal.addEventListener('click', (e) => {
     if (e.target === mediaModal) {
       pauseCurrentMedia();
@@ -1739,25 +1770,19 @@ function updateDaysCounter() {
   const daysCounter = document.getElementById('days-counter');
   if (!daysCounter) return;
   
-  // Usar a mesma data inicial que a função calcularTempoRelacionamento: 21/02/2025
-  const dataInicio = new Date(2025, 1, 21); // 21/02/2025 (mês é 1 pois em JavaScript janeiro=0, fevereiro=1)
+  // Definir a data de início do relacionamento
+  const dataInicio = new Date(2025, 1, 22); // 22/02/2025
   const dataAtual = new Date();
   
-  // Como a data de início está no futuro, simular relacionamento de 60 dias
+  // Se estamos antes da data real de início, mostrar exatamente 60 dias
   if (dataAtual < dataInicio) {
-    // Criar uma data 60 dias atrás para simular 2 meses de relacionamento
-    const dataSimulada = new Date();
-    dataSimulada.setDate(dataAtual.getDate() - 60);
-    
-    // Calcular dias entre a data simulada e hoje
-    const diffMs = dataAtual - dataSimulada;
-    const diasTotais = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-    daysCounter.textContent = diasTotais;
+    // Usar valor exato de 60 dias
+    daysCounter.textContent = "60";
   } else {
-    // Se a data real já chegou, usar a data real
+    // Quando a data real chegar, calcular a partir da data real
     const diffMs = dataAtual - dataInicio;
-    const diasTotais = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-    daysCounter.textContent = diasTotais;
+    const diasDecorridos = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+    daysCounter.textContent = diasDecorridos;
   }
 }
 
@@ -1912,7 +1937,7 @@ function updateFloatingMusicPlayer() {
         floatingPlayer.classList.add('animate');
         setTimeout(() => {
           floatingPlayer.classList.remove('animate');
-        }, 4000);
+        }, 5000);
       }
       
       // Atualizar o botão play/pause
@@ -2052,7 +2077,7 @@ function fadeToSong(songIndex) {
         playPromise.then(() => {
           // Só podemos definir currentTime após um play bem-sucedido em mobile
           setTimeout(() => {
-            audio.currentTime = 16;
+            audio.currentTime = 55;
             console.log("Música 2 iniciada em 16s (dispositivo móvel)");
             
             // Restaurar volume (apenas Android)
@@ -2066,7 +2091,8 @@ function fadeToSong(songIndex) {
           audio.play().catch(e => console.error("Segundo erro ao reproduzir:", e));
         });
       }
-    } else {
+    } 
+    else {
       // Para outras músicas, apenas reproduzir
       audio.play().then(() => {
         if (!isIOS) {
@@ -2150,3 +2176,27 @@ function fadeToSong(songIndex) {
   // Iniciar o processo de fade out
   fadeOut();
 }
+
+// Adicionar evento para gerar estrelas na tela de perfis quando o DOM estiver pronto
+document.addEventListener('DOMContentLoaded', function() {
+  // Gerar estrelas na tela de perfis da Netflix
+  const netflixProfiles = document.getElementById('netflix-profiles');
+  if (netflixProfiles) {
+    gerarEstrelas(netflixProfiles);
+  }
+});
+
+// Adicionar evento para carregar tudo quando o DOM estiver pronto
+document.addEventListener('DOMContentLoaded', function() {
+  // Gera estrelas apenas na tela inicial original (que está oculta)
+  const startScreen = document.getElementById('start-screen');
+  if (startScreen) {
+    gerarEstrelas(startScreen);
+  }
+  
+  // Inicializa o contador de dias
+  updateDaysCounter();
+  
+  // Configurar atualização periódica do contador de dias (a cada hora)
+  setInterval(updateDaysCounter, 3600000);
+});

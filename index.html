@@ -14,9 +14,199 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet" />
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="/css/style.css">
+  <style>
+    /* Estilo para a tela de perfil da Netflix */
+    .netflix-profiles {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100vh;
+      background: #141414;
+      z-index: 3000;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+    }
+    
+    .netflix-who-watching {
+      text-align: center;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 3.5vw;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 4vh;
+    }
+    
+    .netflix-profiles-list {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 2vw;
+    }
+    
+    .netflix-profile {
+      text-align: center;
+      cursor: pointer;
+      max-width: 200px;
+      min-width: 84px;
+      width: 10vw;
+    }
+    
+    .netflix-profile-avatar {
+      width: 100%;
+      aspect-ratio: 1/1;
+      border-radius: 4px;
+      overflow: hidden;
+      position: relative;
+    }
+    
+    .netflix-profile-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      border: 0.3vw solid transparent;
+      transition: all 0.2s ease;
+    }
+    
+    .netflix-profile-name {
+      color: rgb(128, 128, 128);
+      font-size: 1.3vw;
+      margin-top: 0.6vw;
+      font-family: 'Montserrat', sans-serif;
+      transition: all 0.2s ease;
+    }
+    
+    .netflix-profile:hover .netflix-profile-avatar img {
+      border: 0.3vw solid white;
+    }
+    
+    .netflix-profile:hover .netflix-profile-name {
+      color: white;
+    }
+    
+    .netflix-add-profile {
+      text-align: center;
+      cursor: pointer;
+      max-width: 200px;
+      min-width: 84px;
+      width: 10vw;
+    }
+    
+    .netflix-add-profile-icon {
+      width: 100%;
+      aspect-ratio: 1/1;
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    
+    .netflix-add-profile-icon img {
+      width: 50%;
+      filter: grayscale(100%);
+      transition: all 0.2s ease;
+    }
+    
+    .netflix-add-profile-name {
+      color: rgb(128, 128, 128);
+      font-size: 1.3vw;
+      margin-top: 0.6vw;
+      font-family: 'Montserrat', sans-serif;
+      transition: all 0.2s ease;
+    }
+    
+    .netflix-add-profile:hover .netflix-add-profile-icon {
+      background-color: white;
+    }
+    
+    .netflix-add-profile:hover .netflix-add-profile-name {
+      color: white;
+    }
+    
+    @media (max-width: 768px) {
+      .netflix-who-watching {
+        font-size: 32px;
+      }
+      
+      .netflix-profile-name,
+      .netflix-add-profile-name {
+        font-size: 18px;
+      }
+      
+      .netflix-profile,
+      .netflix-add-profile {
+        width: 20vw;
+        min-width: 100px;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .netflix-who-watching {
+        font-size: 28px;
+        margin-bottom: 5vh;
+      }
+      
+      .netflix-profiles-list {
+        flex-wrap: wrap;
+      }
+      
+      .netflix-profile,
+      .netflix-add-profile {
+        width: 30vw;
+        min-width: 120px;
+      }
+      
+      .netflix-profile-name,
+      .netflix-add-profile-name {
+        font-size: 20px;
+        margin-top: 10px;
+      }
+      
+      .banner-content h1 {
+        font-size: 2.5rem;
+      }
+      
+      .banner-content p, .tagline {
+        font-size: 1rem;
+        line-height: 1.4;
+      }
+      
+      .buttons .btn-play, .buttons .btn-list, .buttons .btn-voice {
+        font-size: 0.9rem;
+        padding: 10px 15px;
+      }
+      
+      .gallery-item, .video-item {
+        height: 180px;
+      }
+    }
+  </style>
 </head>
 <body>
-  <div id="start-screen" class="start-screen">
+  <!-- Tela de seleção de perfil da Netflix -->
+  <div id="netflix-profiles" class="netflix-profiles">
+    <div class="netflix-who-watching">Quem está assistindo?</div>
+    
+    <div class="netflix-profiles-list">
+      <div class="netflix-profile" onclick="iniciar()">
+        <div class="netflix-profile-avatar">
+          <img src="assets/foto7.jpg" alt="Perfil Leticia">
+        </div>
+        <div class="netflix-profile-name">Leticia</div>
+      </div>
+      
+
+    </div>
+  </div>
+
+  <div id="start-screen" class="start-screen" style="display:none;">
     <button class="start-btn" onclick="iniciar()">✨ Você está pronta, meu amor? 💌</button>
   </div>
 
@@ -149,13 +339,15 @@
     </nav>
   </header>
 
-  <div id="video-modal" class="hidden fixed inset-0 z-50 bg-black bg-opacity-90 flex items-center justify-center">
-    <div class="relative w-full max-w-4xl">
-      <button id="close-modal" class="absolute -top-10 right-0 text-white text-2xl">✕</button>
-      <video id="modal-video" controls class="w-full">
-        <source src="assets/video.mp4" type="video/mp4">
-        Seu navegador não suporta vídeos em HTML5.
-      </video>
+  <div id="video-modal" class="hidden fixed inset-0 z-50 bg-black bg-opacity-95 flex items-center justify-center">
+    <div class="relative w-full max-w-5xl mx-auto px-4 md:px-0">
+      <button id="close-modal" class="absolute -top-12 right-0 text-white text-3xl bg-red-600 hover:bg-red-700 rounded-full w-10 h-10 flex items-center justify-center z-[60]">✕</button>
+      <div class="rounded-lg overflow-hidden shadow-2xl">
+        <video id="modal-video" controls controlsList="nodownload" class="w-full h-auto max-h-[85vh]">
+          <source src="assets/video.mp4" type="video/mp4">
+          Seu navegador não suporta vídeos em HTML5.
+        </video>
+      </div>
     </div>
   </div>
 
@@ -183,7 +375,8 @@
         </div>
         <!-- <p>Juntos desde 2025 💕</p> -->
         <p class="days-together">Estreou há <span id="days-counter">0</span> Dias 💕</p>
-        <p class="tagline">"O amor verdadeiro não tem final feliz, porque simplesmente não tem final."</p>
+        <p class="tagline">" Em um mundo obcecado por finais felizes, escolhemos viver um amor sem ponto final. Cada olhar, silêncio e risada vira cena perfeita, onde o tempo é cúmplice e os gestos simples ganham close-ups. Sem cortes, sem edições, cada 'eu te amo' é um diálogo digno de replay. Porque aqui, o amor é vivido em tempo real. A cada dia, um novo capítulo."
+        </p>
         <div class="buttons">
           <button class="btn-play">▶ Assistir</button>
           <button class="btn-list">+ Minha Lista</button>
@@ -268,12 +461,15 @@
 
   <!-- Modal para imagens e vídeos -->
   <div id="media-modal" class="hidden fixed inset-0 z-50 bg-black bg-opacity-95 flex items-center justify-center">
-    <div class="relative w-full max-w-5xl flex flex-col items-center">
-      <button id="close-media-modal" class="absolute -top-10 right-0 text-white text-2xl">✕</button>
-      <div id="media-container" class="w-full flex justify-center">
+    <div class="relative w-full max-w-5xl mx-auto px-4 md:px-0">
+      <button id="close-media-modal" class="absolute -top-12 right-0 text-white text-3xl bg-red-600 hover:bg-red-700 rounded-full w-10 h-10 flex items-center justify-center z-[60]">✕</button>
+      <div id="media-container" class="w-full flex justify-center rounded-lg overflow-hidden shadow-2xl">
         <!-- O conteúdo (imagem ou vídeo) será inserido aqui via JavaScript -->
       </div>
       <div id="media-caption" class="text-white text-xl mt-4 text-center"></div>
+      <!-- Botões de navegação -->
+      <button class="media-nav prev absolute left-0 top-1/2 transform -translate-y-1/2 text-white text-5xl bg-black bg-opacity-40 hover:bg-opacity-60 p-3 rounded-r-lg z-50">❮</button>
+      <button class="media-nav next absolute right-0 top-1/2 transform -translate-y-1/2 text-white text-5xl bg-black bg-opacity-40 hover:bg-opacity-60 p-3 rounded-l-lg z-50">❯</button>
     </div>
   </div>
 
