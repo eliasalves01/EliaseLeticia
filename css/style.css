@@ -927,7 +927,7 @@ main.show {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.9);
+  background-color: rgba(0, 0, 0, 0.95);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -935,6 +935,7 @@ main.show {
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.3s ease;
+  padding: 20px;
 }
 
 #video-modal.active {
@@ -952,26 +953,35 @@ main.show {
 }
 
 #video-modal video {
-  width: 90%;
-  max-width: 800px;
+  width: 100%;
+  max-width: 1000px;
+  max-height: 80vh;
   border-radius: 8px;
   outline: none;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
 }
 
 #close-modal {
   position: absolute;
-  top: 20px;
-  right: 20px;
-  background: none;
+  top: 15px;
+  right: 15px;
+  background: rgba(0, 0, 0, 0.6);
   border: none;
   color: white;
-  font-size: 2rem;
+  font-size: 1.2rem;
   cursor: pointer;
-  transition: transform 0.3s;
+  transition: all 0.3s;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2010;
 }
 
 #close-modal:hover {
-  transform: rotate(90deg);
+  background: rgba(229, 9, 20, 0.8);
 }
 
 /* ===== CORAÇÕES FLUTUANTES ===== */
