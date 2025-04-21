@@ -89,7 +89,7 @@ const textDurations = [
   5000,  // Texto 5: "Cada melodia guarda um pedaço do nosso amor"
   11000,  // Texto 6: "Lembra quando ouvimos 'I Wanna Be Yours'..."
   8000,  // Texto 7: "Ou quando 'Monde Nouveau' tocou..."
-  8000,  // Texto 8: ""
+  9000,  // Texto 8: ""
   5000,  // Texto 9: "São nessas pequenas lembranças que nosso amor se fortalece"
   5000,  // Texto 10: "E mesmo quando as notas terminam, nosso amor continua ecoando"
   5000,  // Texto 11: "Você é a melodia que embala meus dias e acalenta minhas noites"
@@ -379,7 +379,9 @@ ${horasTotais.toLocaleString()} horas de histórias criadas juntos!`;
     // Número de meses entre as datas
     const meses = (anoAtual - anoInicio) * 12 + (mesAtual - mesInicio);
     
-    return `Estamos juntos a: ${meses} ${meses === 1 ? 'mês' : 'meses'} ${horasTotais.toLocaleString()} horas de histórias criadas juntos!`
+    return `Estamos juntos a: ${meses} ${meses === 1 ? 'mês' : 'meses'} 
+    
+    ${horasTotais.toLocaleString()} horas de histórias criadas juntos!`
 
   }
   
