@@ -1897,18 +1897,18 @@ function updateDaysCounter() {
   const daysCounter = document.getElementById('days-counter');
   if (!daysCounter) return;
   
-  // Definir a data de início do relacionamento
-  const dataInicio = new Date(2025, 1, 21); // 22/02/2025
+  // Definir a data de início do relacionamento (21/04/2025)
+  const dataInicio = new Date(2025, 3, 21); // Mês em JavaScript começa em 0, então 3 = Abril
   const dataAtual = new Date();
   
-  // Se estamos antes da data real de início, mostrar exatamente 60 dias
-  if (dataAtual < dataInicio) {
-    // Usar valor exato de 60 dias
-    daysCounter.textContent = "60";
+  // Calcular a diferença em dias
+  const diffMs = dataAtual - dataInicio;
+  const diasDecorridos = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+  
+  // Se a data atual for anterior à data de início, mostrar 0 dias
+  if (diasDecorridos < 0) {
+    daysCounter.textContent = "0";
   } else {
-    // Quando a data real chegar, calcular a partir da data real
-    const diffMs = dataAtual - dataInicio;
-    const diasDecorridos = Math.floor(diffMs / (1000 * 60 * 60 * 24));
     daysCounter.textContent = diasDecorridos;
   }
 }
